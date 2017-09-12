@@ -20,10 +20,8 @@ class NoteDAO(private val context: Context?) {
     val getAllNotes: ArrayList<Note>
         get() = ArrayList<Note> (Select.from(Note::class.java).list())
 
-    fun insertNote(note: Note): Int {
+    fun insertNote(note: Note): Int = note.save().toInt()
 
-        return note.save().toInt()
-    }
 
     fun removeNote(note: Note): Boolean {
 

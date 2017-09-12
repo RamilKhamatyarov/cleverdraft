@@ -45,33 +45,30 @@ open class MainModel: MainMVP.ProvidedModelOps{
     }
 
     override fun loadData(): Boolean {
-        notes = noteDAO!!.getAllNotes
+        notes = noteDAO.getAllNotes
         return notes != null
     }
 
     override fun getNote(position: Int): Note {
-        return notes!!.get(position)
+        return notes.get(position)
     }
 
-    override fun getNotesCount(): Int {
-        if (notes != null)
-            return notes!!.size
-        return 0
-    }
+    override fun getNotesCount(): Int = notes.size
+
 
     override fun removeNote(note: Note, adapterPostion: Int): Boolean {
-        val isRemove = noteDAO!!.removeNote(note)
+        val isRemove = noteDAO.removeNote(note)
         if (isRemove) {
-            notes!!.removeAt(adapterPostion)
+            notes.removeAt(adapterPostion)
             return true
         }
         return false
     }
 
     fun getNotePosition(note: Note): Int{
-        for (item in this!!.notes!!)
+        for (item in this.notes)
             if (note.id == item.id)
-                return notes!!.indexOf(item)
+                return notes.indexOf(item)
         return -1
     }
 }

@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Created by Asus on 03.09.2017.
  */
-class MainPresenter: MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
+open class MainPresenter: MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
     /*View reference. We use as a WeakReference
     // because the Activity could be destroyed at any time
     // and we don't want to create a memory leak*/
@@ -100,10 +100,10 @@ class MainPresenter: MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
                 override fun doInBackground(vararg p0: Void): Boolean = mainModel.loadData()
                 override fun onPostExecute(result: Boolean) {
                     getView().hideProgress()
-                    if (!result)
-                        getView().showToast(makeToast("Error loading data"))
-                    else
+                    if (result)
                         getView().notifyDataSetChanged()
+                    else
+                        getView().showToast(makeToast("Error loading data"))
                 }
             }.execute()
 
@@ -136,6 +136,26 @@ class MainPresenter: MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    fun removeNote(note: Note, adapterPosition: Int, layoutPosition: Int){
+
+        getView().showProgress()
+        try{
+            object: AsyncTask<Void, Void, Boolean>(){
+                override fun doInBackground(vararg p0: Void): Boolean = mainModel.removeNote(note, adapterPosition)
+                override fun onPostExecute(result: Boolean) {
+                    getView().hideProgress()
+                    if (result) {
+                        getView().notifyItemRemoved(layoutPosition)
+                        getView().showToast(makeToast("Note removed"))
+                    }else
+                        getView().showToast(makeToast("Error removing data["+note.id+"]"))
+                }
+            }.execute()
+
+        } catch (e: NullPointerException){
+            e.printStackTrace()
+        }
+    }
 
     override fun getApplicationContext(): Context = getView().getAppContext()
 
