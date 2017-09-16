@@ -14,9 +14,16 @@ import android.widget.Toast
 import com.orm.SugarContext
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.utililities.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private lateinit var btnAdd: FloatingActionButton
+    @Inject
+    public lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+    private lateinit var stateMaintainer: StateMaintainer
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -38,6 +45,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     private fun setupMVP() {
+
         TODO("Implement main MVP")
     }
 

@@ -1,4 +1,4 @@
-package ru.rkhamatyarov.cleverdraft.utlilities
+package ru.rkhamatyarov.cleverdraft.utililities
 
 /**
  * Created by Asus on 24.08.2017.

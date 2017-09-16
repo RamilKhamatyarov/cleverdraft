@@ -2,8 +2,7 @@ package ru.rkhamatyarov.cleverdraft.model
 
 import android.content.Context
 import com.orm.SugarContext
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import junit.framework.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -31,6 +30,7 @@ class MainModelTest {
 
     @Before
     fun setup(){
+
         val context: Context = RuntimeEnvironment.application
         SugarContext.init(context)
         noteDAO = NoteDAO(context)
@@ -43,27 +43,35 @@ class MainModelTest {
     }
 
     @Test
-    fun loadDate() {
-        val noteCounts = 20
-         
+    fun loadData() {
+        val noteLength = 20
+
+        for (item: Int in 1..noteLength) noteDAO.insertNote(makeNote("test content #"+item))
+        mainModel.loadData();
+        assertEquals(mainModel.notes.size, noteLength)
 
     }
 
     @Test
+    fun insertData() {
+        val isInserted = mainModel.insertNote(makeNote("test content"))
+    }
+
+    @Test
     fun removeNote() {
-        val note = createNote("test content")
+        val note = makeNote("test content")
         val insertId = noteDAO.insertNote(note)
         mainModel.notes = ArrayList<Note>()
         mainModel.notes.add(noteDAO.getNote(insertId))
 
         assertTrue(mainModel.removeNote(note, 0))
 
-        val note2 = createNote("test content2")
+        val note2 = makeNote("test content2")
         assertFalse(mainModel.removeNote(note2, 0))
 
     }
 
-    private fun createNote(content: String): Note {
+    private fun makeNote(content: String): Note {
         val note = Note()
         note.content = content
         note.createdDate = Calendar.getInstance().getTime()
