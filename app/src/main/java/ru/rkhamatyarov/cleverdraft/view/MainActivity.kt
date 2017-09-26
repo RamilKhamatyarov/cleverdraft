@@ -1,32 +1,54 @@
 package ru.rkhamatyarov.cleverdraft.view
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
-import android.view.Menu
-import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
-import com.orm.SugarContext
-import ru.rkhamatyarov.cleverdraft.MainMVP
-import ru.rkhamatyarov.cleverdraft.R
-import ru.rkhamatyarov.cleverdraft.utililities.*
+import ru.rkhamatyarov.cleverdraft.ChiefApp
 import javax.inject.Inject
 
+import ru.rkhamatyarov.cleverdraft.MainMVP
+import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
+import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
+import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
+import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
+
+import ru.rkhamatyarov.cleverdraft.utililities.StateMaintainer
+import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityComponent
+
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
-    private lateinit var btnAdd: FloatingActionButton
+    private var mainTextNewNote: EditText? = null
+    private var mainListAdapter: ListNotes? = null
+    private var mProgress: ProgressBar? = null
+
+    override fun showAlert(alertDialog: android.app.AlertDialog) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+
     @Inject
-    public lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
-    private lateinit var stateMaintainer: StateMaintainer
+    lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+
+    // Responsible to maintain the object's integrity
+    // during configurations change
+    private val mStateMaintainer = StateMaintainer(fragmentManager, MainActivity::class.java.name)
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -34,92 +56,144 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         setupMVP()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mainPresenter.onDestroy(isChangingConfigurations)
+    }
+
+    /**
+     * Setup the Views
+     */
     private fun setupViews() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
+        val fab = findViewById(R.id.fab) as FloatingActionButton
+        fab.setOnClickListener(this)
 
-        btnAdd = findViewById(R.id.fab) as FloatingActionButton
-        btnAdd.setOnClickListener(this)
+        mainTextNewNote = findViewById(R.id.edit_note) as EditText
+        mainListAdapter = ListNotes()
+        mProgress = findViewById(R.id.progressbar) as ProgressBar
 
-        TODO("Implement recycle view")
+        val mList = findViewById(R.id.list_notes) as RecyclerView
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        mList.layoutManager = linearLayoutManager
+        mList.adapter = mainListAdapter
+        mList.itemAnimator = DefaultItemAnimator()
     }
 
+    /**
+     * Setup Model View Presenter pattern.
+     * Use a [StateMaintainer] to maintain the
+     * Presenter and Model instances between configuration changes.
+     */
     private fun setupMVP() {
-
-        TODO("Implement main MVP")
+        if (mStateMaintainer.firstTimeIn()) {
+            initialize()
+        } else {
+            reinitialize()
+        }
     }
 
-    override fun onClick(view: View) {
-        //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //                .setAction("Action", null).show();
-        val intent: Intent
 
-        when (view.id) {
+    private fun initialize() {
+        Log.d(TAG, "initialize")
+        setupComponent()
+        mStateMaintainer.put(MainPresenter::class.java.simpleName, mainPresenter)
+    }
+
+
+    private fun reinitialize() {
+        Log.d(TAG, "reinitialize")
+        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
+        mainPresenter.setView(this)
+        if (mainPresenter == null)
+            setupComponent()
+    }
+
+
+    private fun setupComponent() {
+        Log.d(TAG, "setupComponent")
+
+
+         val mActMod: MainActivityComponent = ChiefApp.get(this).getAppComponent()
+                .getMainComponent(MainActivityModule(this)) as MainActivityComponent
+
+         mActMod.inject(this)
+
+    }
+
+
+    override fun onClick(v: View) {
+        when (v.id) {
             R.id.fab -> {
-                intent = Intent(this, TextEditActivity::class.java)
-                startActivity(intent)
+                // Add new note
+                mainPresenter.clickNewNote(mainTextNewNote!!)
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-
-        return if (id == R.id.action_settings) {
-            true
-        } else super.onOptionsItemSelected(item)
-
-    }
-
-    override fun getAppContext(): Context = getApplicationContext();
-    override fun getActContext(): Context = this
-
     override fun showToast(toast: Toast) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun hideProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun showAlert(alertDialog: AlertDialog) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun notifyItemRemoved(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun notifyDataSetChanged() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun notifyItemInserted(layoutPosition: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun notifyItemRangeChanged(startPosition: Int, count: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        toast.show()
     }
 
     override fun clearEditText() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mainTextNewNote!!.setText("")
     }
 
+    override fun showProgress() {
+        mProgress!!.visibility = View.VISIBLE
+    }
 
+    override fun hideProgress() {
+        mProgress!!.visibility = View.GONE
+    }
+
+    fun showAlert(dialog: AlertDialog) {
+        dialog.show()
+    }
+
+    override fun notifyItemRemoved(position: Int) {
+        mainListAdapter!!.notifyItemRemoved(position)
+    }
+
+    override fun notifyItemInserted(adapterPos: Int) {
+        mainListAdapter!!.notifyItemInserted(adapterPos)
+    }
+
+    override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
+        mainListAdapter!!.notifyItemRangeChanged(positionStart, itemCount)
+    }
+
+    override fun notifyDataSetChanged() {
+        mainListAdapter!!.notifyDataSetChanged()
+    }
+
+    private inner class ListNotes : RecyclerView.Adapter<NotesViewHolder>() {
+
+
+        override fun getItemCount(): Int {
+            return mainPresenter!!.getNotesCount()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
+            return mainPresenter!!.createViewHolder(parent, viewType)
+        }
+
+        override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
+            mainPresenter.bindViewHolder(holder, position)
+        }
+
+    }
+
+    companion object {
+
+        private val TAG = MainActivity::class.java.simpleName
+    }
+
+    override fun getAppContext(): Context = applicationContext
+
+    override fun getActContext(): Context = this
 
 }

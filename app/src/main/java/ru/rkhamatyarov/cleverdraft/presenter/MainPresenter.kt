@@ -43,7 +43,7 @@ open class MainPresenter: MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getNotesCount() {
+    override fun getNotesCount(): Int {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

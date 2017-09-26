@@ -39,7 +39,7 @@ interface   MainMVP {
         fun setView(view: ViewOps)
         fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder
         fun bindViewHolder(holder: NotesViewHolder, position: Int)
-        fun getNotesCount()
+        fun getNotesCount(): Int
         fun clickNewNote(editText: EditText)
         fun clickDeleteNote(note: Note, adapterPostion: Int, layoutPosition: Int)
     }
