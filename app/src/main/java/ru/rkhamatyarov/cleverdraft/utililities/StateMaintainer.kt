@@ -7,11 +7,11 @@ import android.util.Log
 import java.lang.ref.WeakReference
 
 
-class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateMaintenerTag: String) {
+class StateMaintainer (fragmentManager: FragmentManager, private val mainStateMaintenerTag: String) {
 
     protected val TAG = javaClass.simpleName
-    private val mainFragmentManager: WeakReference<FragmentManager?>
-    private lateinit var mainStateMaintainerFragment: StateManagerFragment
+    private val mainFragmentManager: WeakReference<FragmentManager>
+    private var mainStateMaintainerFragment: StateManagerFragment? = null
     private var isRecreating: Boolean = false
 
     init {
@@ -24,23 +24,24 @@ class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateM
      */
     fun firstTimeIn(): Boolean {
         try {
-            // Recuperando referência
-            mainStateMaintainerFragment = mainFragmentManager.get()!!.findFragmentByTag(mainStateMaintenerTag) as StateManagerFragment
+             // Recover reference
+             mainStateMaintainerFragment = mainFragmentManager.get()!!.findFragmentByTag(mainStateMaintenerTag) as? StateManagerFragment
 
-            // Criando novo RetainedFragment
-            if (mainStateMaintainerFragment == null) {
-                Log.d(TAG, "Criando novo RetainedFragment " + mainStateMaintenerTag)
-                mainStateMaintainerFragment = StateManagerFragment()
-                mainFragmentManager.get()!!.beginTransaction().add(mainStateMaintainerFragment, mainStateMaintenerTag).commit()
-                isRecreating = false
-                return true
-            } else {
-                Log.d(TAG, "Retornando retained fragment existente " + mainStateMaintenerTag)
-                isRecreating = true
-                return false
-            }
+             //  Create new RetainedFragment
+             if (mainStateMaintainerFragment == null) {
+                 Log.d(TAG, "Create new RetainedFragment " + mainStateMaintenerTag)
+                 mainStateMaintainerFragment = StateManagerFragment()
+                 Log.d(TAG, "Created new  mainStateMaintainerFragment " +  mainStateMaintainerFragment.toString())
+                 mainFragmentManager.get()!!.beginTransaction().add(mainStateMaintainerFragment, mainStateMaintenerTag).commit()
+                 isRecreating = false
+                 return true
+             } else {
+                 Log.d(TAG, "Return retained fragment  " + mainStateMaintenerTag);
+                 isRecreating = true;
+                 return false;
+             }
         } catch (e: NullPointerException) {
-            Log.w(TAG, "Erro firstTimeIn()")
+            Log.w(TAG, "Error firstTimeIn()")
             return false
         }
 
@@ -61,7 +62,7 @@ class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateM
      * @param any   object to maintain
      */
     fun put(key: String, any: Any) {
-        mainStateMaintainerFragment.put(key, any)
+        mainStateMaintainerFragment!!.put(key, any)
     }
 
     /**
@@ -80,7 +81,7 @@ class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateM
      * @return      Object saved
     </T> */
     operator fun get(key: String): Any? {
-        return mainStateMaintainerFragment.get(key)
+        return mainStateMaintainerFragment!!.get(key)
 
     }
 
@@ -90,7 +91,7 @@ class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateM
      * @return      true: Object exists
      */
     fun hasKey(key: String): Boolean {
-        return mainStateMaintainerFragment.get(key) != null
+        return mainStateMaintainerFragment!!.get(key) != null
     }
 
 
@@ -99,10 +100,11 @@ class StateMaintainer (fragmentManager: FragmentManager?, private val mainStateM
      * Instantiated only once. Uses a hashmap to save objs
      */
     class StateManagerFragment : Fragment() {
-        private val mainData = HashMap<String, Any>()
+        private var mainData = HashMap<String, Any>()
 
-        override fun onCreate(savedInstanceState: Bundle) {
+        override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            Log.d("In onCreate", savedInstanceState.toString())
             // Grants that the fragment will be preserved
             setRetainInstance(true)
         }

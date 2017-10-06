@@ -32,7 +32,7 @@ class MainPresenterTest {
         mockView = Mockito.mock( MainMVP.ViewOps::class.java )
         mockModel = Mockito.mock( MainModel::class.java, RETURNS_DEEP_STUBS)
         mainPresenter = MainPresenter(mockView)
-        mainPresenter.setModel(mockModel)
+        mainPresenter.mainModel = mockModel
 
         `when`(mockModel.loadData()).thenReturn(true)
         reset(mockView)

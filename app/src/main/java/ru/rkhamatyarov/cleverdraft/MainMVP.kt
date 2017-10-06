@@ -35,8 +35,12 @@ interface   MainMVP {
 
 
     interface ProvidedPresenterOps{
+        fun getApplicationContext(): Context
+        fun getActivityContext(): Context
+
         fun onDestroy(isChangingConfiguration: Boolean)
         fun setView(view: ViewOps)
+//        fun setModel(model: ProvidedModelOps)
         fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder
         fun bindViewHolder(holder: NotesViewHolder, position: Int)
         fun getNotesCount(): Int

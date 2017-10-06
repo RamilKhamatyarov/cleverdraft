@@ -2,6 +2,7 @@ package ru.rkhamatyarov.cleverdraft
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import ru.rkhamatyarov.cleverdraft.utililities.di.AppComponent
 import ru.rkhamatyarov.cleverdraft.utililities.di.AppModule
 import ru.rkhamatyarov.cleverdraft.utililities.di.DaggerAppComponent
@@ -10,11 +11,16 @@ import ru.rkhamatyarov.cleverdraft.utililities.di.DaggerAppComponent
 /**
  * Created by Asus on 16.09.2017.
  */
+fun get(context: Context): ChiefApp {
+    Log.d("ChiefApp get ", context.getApplicationContext().toString())
+    return context.getApplicationContext() as ChiefApp
+}
+
+
 class ChiefApp: Application() {
 
-    companion object Factory {
-        fun get(context: Context): ChiefApp = context.getApplicationContext() as ChiefApp
-    }
+//    companion object Factory {
+//    }
 
     override fun onCreate() {
         super.onCreate()

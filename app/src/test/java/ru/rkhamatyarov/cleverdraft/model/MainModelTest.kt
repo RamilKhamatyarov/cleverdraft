@@ -48,7 +48,7 @@ class MainModelTest {
 
         for (item: Int in 1..noteLength) noteDAO.insertNote(makeNote("test content #"+item))
         mainModel.loadData();
-        assertEquals(mainModel.notes.size, noteLength)
+        assertEquals(mainModel.notes!!.size, noteLength)
 
     }
 
@@ -62,7 +62,7 @@ class MainModelTest {
         val note = makeNote("test content")
         val insertId = noteDAO.insertNote(note)
         mainModel.notes = ArrayList<Note>()
-        mainModel.notes.add(noteDAO.getNote(insertId))
+        mainModel.notes!!.add(noteDAO.getNote(insertId))
 
         assertTrue(mainModel.removeNote(note, 0))
 

@@ -1,5 +1,6 @@
-package ru.rkhamatyarov.cleverdraft.view
+package ru.rkhamatyarov.cleverdraft
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -15,12 +16,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import ru.rkhamatyarov.cleverdraft.ChiefApp
 import javax.inject.Inject
 
-import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
-import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
@@ -33,13 +32,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private var mainListAdapter: ListNotes? = null
     private var mProgress: ProgressBar? = null
 
-    override fun showAlert(alertDialog: android.app.AlertDialog) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
 
 
-    @Inject
+//    @Inject
     lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
 
     // Responsible to maintain the object's integrity
@@ -50,10 +47,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupMVP()
         setContentView(R.layout.activity_main)
 
         setupViews()
-        setupMVP()
+
     }
 
     override fun onDestroy() {
@@ -65,14 +63,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
      * Setup the Views
      */
     private fun setupViews() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        val fab = findViewById(R.id.fab) as FloatingActionButton
+        val toolbar = findViewById(R.id.toolbar)
+//        setSupportActionBar(toolbar)
+        val fab = findViewById(R.id.fab)
         fab.setOnClickListener(this)
 
-        mainTextNewNote = findViewById(R.id.edit_note) as EditText
+        mainTextNewNote = findViewById(R.id.edit_note) as EditText?
         mainListAdapter = ListNotes()
-        mProgress = findViewById(R.id.progressbar) as ProgressBar
+        mProgress = findViewById(R.id.progressbar) as ProgressBar?
 
         val mList = findViewById(R.id.list_notes) as RecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
@@ -99,30 +97,41 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     private fun initialize() {
         Log.d(TAG, "initialize")
-        setupComponent()
+//        setupComponent()
+        mainPresenter = MainPresenter(this)
+        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
+        mainPresenter.setView(this)
+        (mainPresenter as MainPresenter).mainModel = model
+
         mStateMaintainer.put(MainPresenter::class.java.simpleName, mainPresenter)
+        mStateMaintainer.put(model)
     }
 
 
     private fun reinitialize() {
         Log.d(TAG, "reinitialize")
         mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
+        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
         mainPresenter.setView(this)
-        if (mainPresenter == null)
-            setupComponent()
+        (mainPresenter as MainPresenter).mainModel = model
+
+        mStateMaintainer.put(mainPresenter)
+        mStateMaintainer.put(model)
+//        if (mainPresenter == null)
+//            initialize()
     }
 
 
-    private fun setupComponent() {
+   /* private fun setupComponent() {
         Log.d(TAG, "setupComponent")
+        Log.d(TAG, "setupComponent" + this.toString())
 
-
-         val mActMod: MainActivityComponent = ChiefApp.get(this).getAppComponent()
+         val mActMod: MainActivityComponent = get(this).getAppComponent()
                 .getMainComponent(MainActivityModule(this)) as MainActivityComponent
 
          mActMod.inject(this)
 
-    }
+    }*/
 
 
     override fun onClick(v: View) {
@@ -174,11 +183,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
 
         override fun getItemCount(): Int {
-            return mainPresenter!!.getNotesCount()
+            return mainPresenter.getNotesCount()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
-            return mainPresenter!!.createViewHolder(parent, viewType)
+            return mainPresenter.createViewHolder(parent, viewType)
         }
 
         override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {

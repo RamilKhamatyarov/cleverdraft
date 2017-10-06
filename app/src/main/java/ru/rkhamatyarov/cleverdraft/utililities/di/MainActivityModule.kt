@@ -5,8 +5,7 @@ import dagger.Provides
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.view.MainActivity
-import javax.inject.Scope
+import ru.rkhamatyarov.cleverdraft.MainActivity
 
 /**
  * Created by Asus on 19.09.2017.
@@ -24,8 +23,8 @@ class MainActivityModule (val mainActivity: MainActivity) {
     @ActivityScope
     fun providedPresenterOps(): MainMVP.ProvidedPresenterOps {
         val mainPresenter: MainPresenter = MainPresenter(this.mainActivity)
-        val mainModel: MainModel = MainModel(mainPresenter)
-        mainPresenter.setModel(mainModel)
+        val model: MainModel = MainModel(mainPresenter)
+        mainPresenter.mainModel = model
         return mainPresenter
     }
 
