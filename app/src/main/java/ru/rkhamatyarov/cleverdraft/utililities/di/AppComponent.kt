@@ -15,6 +15,6 @@ import javax.inject.Singleton
 @Component(modules = arrayOf(AppModule::class))
 interface AppComponent {
     fun application(): Application
-    fun getMainComponent(module: MainActivityModule): MainActivityModule
+    fun getMainComponent(mainActivityModule: MainActivityModule): MainActivityComponent
 
 }

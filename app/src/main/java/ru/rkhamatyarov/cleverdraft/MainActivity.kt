@@ -21,11 +21,10 @@ import javax.inject.Inject
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
 import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 
 import ru.rkhamatyarov.cleverdraft.utililities.StateMaintainer
-import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityComponent
+import ru.rkhamatyarov.cleverdraft.utililities.di.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
 
 
-//    @Inject
+    @Inject
     lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
 
     // Responsible to maintain the object's integrity
@@ -63,8 +62,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
      * Setup the Views
      */
     private fun setupViews() {
-        val toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
+        /*val toolbar:Toolbar? = findViewById(R.id.toolbar) as Toolbar?
+        setSupportActionBar(toolbar)*/
+
         val fab = findViewById(R.id.fab)
         fab.setOnClickListener(this)
 
@@ -97,41 +97,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     private fun initialize() {
         Log.d(TAG, "initialize")
-//        setupComponent()
-        mainPresenter = MainPresenter(this)
-        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
-        mainPresenter.setView(this)
-        (mainPresenter as MainPresenter).mainModel = model
-
-        mStateMaintainer.put(MainPresenter::class.java.simpleName, mainPresenter)
-        mStateMaintainer.put(model)
+        setupComponent()
     }
 
 
     private fun reinitialize() {
-        Log.d(TAG, "reinitialize")
         mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
-        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
+//        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
         mainPresenter.setView(this)
-        (mainPresenter as MainPresenter).mainModel = model
+//        (mainPresenter as MainPresenter).mainModel = model
 
-        mStateMaintainer.put(mainPresenter)
-        mStateMaintainer.put(model)
+//        mStateMaintainer.put(mainPresenter)
+//        mStateMaintainer.put(model)
 //        if (mainPresenter == null)
 //            initialize()
     }
 
 
-   /* private fun setupComponent() {
-        Log.d(TAG, "setupComponent")
-        Log.d(TAG, "setupComponent" + this.toString())
+    private fun setupComponent() {
+        ChiefApp.get(this).getAppComponent().getMainComponent(MainActivityModule(this)).inject(this)
 
-         val mActMod: MainActivityComponent = get(this).getAppComponent()
-                .getMainComponent(MainActivityModule(this)) as MainActivityComponent
-
-         mActMod.inject(this)
-
-    }*/
+    }
 
 
     override fun onClick(v: View) {

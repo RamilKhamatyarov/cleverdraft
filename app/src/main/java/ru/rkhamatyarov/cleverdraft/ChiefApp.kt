@@ -11,16 +11,18 @@ import ru.rkhamatyarov.cleverdraft.utililities.di.DaggerAppComponent
 /**
  * Created by Asus on 16.09.2017.
  */
-fun get(context: Context): ChiefApp {
-    Log.d("ChiefApp get ", context.getApplicationContext().toString())
-    return context.getApplicationContext() as ChiefApp
-}
+//fun get(context: Context): ChiefApp {
+//    return context.getApplicationContext() as ChiefApp
+//}
 
 
 class ChiefApp: Application() {
 
-//    companion object Factory {
-//    }
+    companion object Factory {
+        fun get(context: Context): ChiefApp {
+            return context.getApplicationContext() as ChiefApp
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()

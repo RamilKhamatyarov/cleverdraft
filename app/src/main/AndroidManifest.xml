@@ -8,6 +8,7 @@
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application
+        android:name=".ChiefApp"
         android:hardwareAccelerated="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
@@ -27,10 +28,10 @@
     </application>
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
 
-    <!--Creting db with Sugar ORM-->
+    <!--Creating db with Sugar ORM-->
     <meta-data android:name="com.orm.SugarApp" />
     <meta-data android:name="DATABASE" android:value="cleverdraft.db" />
-    <meta-data android:name="VERSION" android:value="2" />
+    <meta-data android:name="VERSION" android:value="4" />
     <meta-data android:name="QUERY_LOG" android:value="true" />
-    <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="ru.rkhamatyarov" />
+    <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="ru.rkhamatyarov.cleverdraft.model" />
 </manifest>

@@ -13,7 +13,7 @@ import ru.rkhamatyarov.cleverdraft.MainActivity
 
 
 @Module
-class MainActivityModule (val mainActivity: MainActivity) {
+class MainActivityModule (var mainActivity: MainActivity) {
 
     @Provides
     @ActivityScope
