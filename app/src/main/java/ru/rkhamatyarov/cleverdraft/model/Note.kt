@@ -1,16 +1,15 @@
 package ru.rkhamatyarov.cleverdraft.model
 
-import com.orm.SugarRecord
-
+import android.content.ContentValues
+import ru.rkhamatyarov.cleverdraft.utililities.NoteConstants
 import java.util.Date
-import kotlin.properties.Delegates
 
 /**
  * Created by Asus on 02.09.2017.
  */
 
-class Note : SugarRecord {
-    private var id: Int = -1
+class Note {
+    var id: Long = -1
     var title: String? = null
     var content: String? = null
     var createdDate: Date? = null
@@ -18,7 +17,7 @@ class Note : SugarRecord {
 
     constructor() {}
 
-    constructor(id: Int, title: String, content: String, createdDate: Date, modifiedDate: Date) {
+    constructor(id: Long, title: String, content: String, createdDate: Date, modifiedDate: Date) {
         this.id = id
         this.title = title
         this.content = content
@@ -29,6 +28,19 @@ class Note : SugarRecord {
     constructor(content: String, createdDate: Date) {
         this.content = content
         this.createdDate = createdDate
+    }
+
+
+    fun getContentValues(): ContentValues {
+        val contentValues = ContentValues()
+
+        if (!id.equals(-1L))
+            contentValues.put(NoteConstants.NOTES_TABLE.ID.getName(), id)
+
+        contentValues.put(NoteConstants.NOTES_TABLE.CONTENT.getName(), content)
+        contentValues.put(NoteConstants.NOTES_TABLE.TIME.getName(), createdDate.toString())
+
+        return contentValues
     }
 
 

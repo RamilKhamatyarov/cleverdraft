@@ -58,7 +58,7 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.hannesdorfmann.mosby3:mvp:3.0.4' // Plain MVP
-    compile 'com.github.satyan:sugar:1.5'
+//    compile 'com.github.satyan:sugar:1.5'
 
     compile "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"

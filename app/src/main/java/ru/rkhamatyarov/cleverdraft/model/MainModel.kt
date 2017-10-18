@@ -32,10 +32,10 @@ open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.
         }
     }
 
-    override fun insertNote(note: Note): Int {
-        val insertedId = noteDAO!!.insertNote(note)
+    override fun insertNote(note: Note): Long {
+        val insertedId = noteDAO?.insertNote(note)
 
-        if (insertedId != 0) {
+        if (insertedId != null) {
             loadData()
             return insertedId
         }
@@ -43,7 +43,7 @@ open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.
     }
 
     override fun loadData(): Boolean {
-        notes = noteDAO!!.getAllNotes
+        notes = noteDAO?.getAllNotes()
         return notes != null
     }
 
@@ -51,16 +51,18 @@ open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.
         return notes!!.get(position)
     }
 
-    override fun getNotesCount(): Int {
-        if (notes !=null) return notes!!.size
+    override fun getNotesCount(): Int? {
+        if (notes !=null) return notes?.size
         return 0
     }
 
 
-    override fun removeNote(note: Note, adapterPostion: Int): Boolean {
-        val isRemove = noteDAO!!.removeNote(note)
-        if (isRemove) {
-            notes!!.removeAt(adapterPostion)
+    override fun removeNote(note: Note, adapterPosition: Int): Boolean {
+        val isRemove = noteDAO?.removeNote(note)
+
+        if (isRemove != null && isRemove) {
+
+            notes?.removeAt(adapterPosition)
             return true
         }
         return false

@@ -2,9 +2,7 @@ package ru.rkhamatyarov.cleverdraft.presenter
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.AsyncTask
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +13,7 @@ import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.model.Note
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -55,15 +54,17 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
     }
 
     override fun bindViewHolder(holder: NotesViewHolder, position: Int) {
-        val note: Note = mainModel!!.getNote(position)
+        val note: Note? = mainModel?.getNote(position)
 
-        holder.content.setText(note.content)
-        holder.date.setText(note.createdDate.toString())
+        holder.content.setText(note?.content)
+        val formatter = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.US)
+
+        holder.date.setText(formatter.format(note?.createdDate))
         holder.butonDelete.setOnClickListener({ v -> clickDeleteNote(note, holder.adapterPosition, holder.layoutPosition)})
 
     }
 
-    override fun getNotesCount(): Int = mainModel!!.getNotesCount()
+    override fun getNotesCount(): Int? = mainModel?.getNotesCount()
 
     override fun clickNewNote(editText: EditText) {
         getView().showProgress();
@@ -72,9 +73,9 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
 
         if (!noteText.isEmpty()) {
             object : AsyncTask<Void, Void, Int>() {
-                override fun doInBackground(vararg params: Void): Int {
+                override fun doInBackground(vararg params: Void): Int? {
                     // Insert note in Model, returning result
-                    return mainModel!!.insertNote(makeNote(noteText))
+                    return mainModel?.insertNote(makeNote(noteText))?.toInt()
                 }
 
                 override fun onPostExecute(adapterPosition: Int) {
@@ -83,7 +84,7 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
                             // Insert note
                             getView().clearEditText()
                             getView().notifyItemInserted(adapterPosition + 1)
-                            getView().notifyItemRangeChanged(adapterPosition, mainModel!!.getNotesCount())
+                            getView().notifyItemRangeChanged(adapterPosition, mainModel?.getNotesCount())
                         } else {
                             // Inform about error
                             getView().hideProgress()
@@ -140,7 +141,7 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
 //    @Throws(NullPointerException::class)
     private fun getView(): MainMVP.ViewOps = mainView!!.get()!!
 
-    override fun clickDeleteNote(note: Note, adapterPostion: Int, layoutPosition: Int) = openDeleteAlert(note, adapterPostion, layoutPosition)
+    override fun clickDeleteNote(note: Note?, adapterPostion: Int, layoutPosition: Int) = openDeleteAlert(note, adapterPostion, layoutPosition)
 
     /**
      * Create an AlertBox to confirm a delete action
@@ -148,12 +149,16 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
      * @param adapterPos    Adapter position
      * @param layoutPos     Recycler layout position
      */
-    private fun openDeleteAlert(note: Note, adapterPosition: Int, layoutPosition: Int ) {
+    private fun openDeleteAlert(note: Note?, adapterPosition: Int, layoutPosition: Int ) {
         var alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(getActivityContext())
-        alertDialogBuilder.setPositiveButton("DELETE", { dialog, width -> deleteNote(note, adapterPosition, layoutPosition)})
+        alertDialogBuilder.setPositiveButton("DELETE", { dialog, width ->
+            if (note != null) {
+                deleteNote(note, adapterPosition, layoutPosition)
+            }
+        })
         alertDialogBuilder.setNegativeButton("CANCEL", {dialog, width -> dialog.dismiss()})
         alertDialogBuilder.setTitle("Delete note")
-        alertDialogBuilder.setMessage("Delete " + note.content + "?")
+        alertDialogBuilder.setMessage("Delete " + note?.content + "?")
 
         var alertDialog: AlertDialog = alertDialogBuilder.create()
         getView().showAlert(alertDialog)
@@ -187,7 +192,7 @@ open class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
 
     override fun onDestroy(isChangingConfiguration: Boolean) {
         mainView = null
-        mainModel!!.onDestroy(isChangingConfiguration)
+        mainModel?.onDestroy(isChangingConfiguration)
 
         if (!isChangingConfiguration) mainModel = null
 

@@ -1,15 +1,12 @@
 package ru.rkhamatyarov.cleverdraft
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +16,6 @@ import android.widget.Toast
 import javax.inject.Inject
 
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
-import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 
@@ -68,7 +64,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         val fab = findViewById(R.id.fab)
         fab.setOnClickListener(this)
 
-        mainTextNewNote = findViewById(R.id.edit_note) as EditText?
+        mainTextNewNote = findViewById(R.id.edit_note) as EditText
         mainListAdapter = ListNotes()
         mProgress = findViewById(R.id.progressbar) as ProgressBar?
 
@@ -124,7 +120,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         when (v.id) {
             R.id.fab -> {
                 // Add new note
-                mainPresenter.clickNewNote(mainTextNewNote!!)
+                mainTextNewNote?.let { mainPresenter.clickNewNote(it) }
             }
         }
     }
@@ -134,15 +130,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     override fun clearEditText() {
-        mainTextNewNote!!.setText("")
+        mainTextNewNote?.setText("")
     }
 
     override fun showProgress() {
-        mProgress!!.visibility = View.VISIBLE
+        mProgress?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        mProgress!!.visibility = View.GONE
+        mProgress?.visibility = View.GONE
     }
 
     fun showAlert(dialog: AlertDialog) {
@@ -150,26 +146,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     override fun notifyItemRemoved(position: Int) {
-        mainListAdapter!!.notifyItemRemoved(position)
+        mainListAdapter?.notifyItemRemoved(position)
     }
 
     override fun notifyItemInserted(adapterPos: Int) {
-        mainListAdapter!!.notifyItemInserted(adapterPos)
+        mainListAdapter?.notifyItemInserted(adapterPos)
     }
 
-    override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int) {
-        mainListAdapter!!.notifyItemRangeChanged(positionStart, itemCount)
+    override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int?) {
+        if (itemCount != null) {
+            mainListAdapter?.notifyItemRangeChanged(positionStart, itemCount)
+        }
     }
 
     override fun notifyDataSetChanged() {
-        mainListAdapter!!.notifyDataSetChanged()
+        mainListAdapter?.notifyDataSetChanged()
     }
 
     private inner class ListNotes : RecyclerView.Adapter<NotesViewHolder>() {
 
 
         override fun getItemCount(): Int {
-            return mainPresenter.getNotesCount()
+            val count = mainPresenter.getNotesCount()
+            if (count != null) {
+                return count
+            }
+            return 0
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {

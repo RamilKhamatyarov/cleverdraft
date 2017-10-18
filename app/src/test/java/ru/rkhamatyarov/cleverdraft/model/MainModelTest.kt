@@ -1,9 +1,7 @@
 package ru.rkhamatyarov.cleverdraft.model
 
 import android.content.Context
-import com.orm.SugarContext
 import junit.framework.Assert.*
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +30,6 @@ class MainModelTest {
     fun setup(){
 
         val context: Context = RuntimeEnvironment.application
-        SugarContext.init(context)
         noteDAO = NoteDAO(context)
 
         mockPresenter = Mockito.mock(MainPresenter::class.java)
@@ -48,7 +45,7 @@ class MainModelTest {
 
         for (item: Int in 1..noteLength) noteDAO.insertNote(makeNote("test content #"+item))
         mainModel.loadData();
-        assertEquals(mainModel.notes!!.size, noteLength)
+        assertEquals(mainModel.notes?.size, noteLength)
 
     }
 
@@ -62,9 +59,10 @@ class MainModelTest {
         val note = makeNote("test content")
         val insertId = noteDAO.insertNote(note)
         mainModel.notes = ArrayList<Note>()
-        mainModel.notes!!.add(noteDAO.getNote(insertId))
+        mainModel.notes?.add(noteDAO.getNote(insertId))
 
-        assertTrue(mainModel.removeNote(note, 0))
+        val noteForRm = noteDAO.getNote(insertId)
+        assertTrue(mainModel.removeNote(noteForRm, 0))
 
         val note2 = makeNote("test content2")
         assertFalse(mainModel.removeNote(note2, 0))
@@ -78,9 +76,6 @@ class MainModelTest {
         return note
     }
 
-    @After
-    fun terminate() {
-        SugarContext.terminate()
-    }
+
 }
 

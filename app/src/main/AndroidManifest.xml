@@ -29,9 +29,9 @@
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
 
     <!--Creating db with Sugar ORM-->
-    <meta-data android:name="com.orm.SugarApp" />
-    <meta-data android:name="DATABASE" android:value="cleverdraft.db" />
-    <meta-data android:name="VERSION" android:value="4" />
-    <meta-data android:name="QUERY_LOG" android:value="true" />
-    <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="ru.rkhamatyarov.cleverdraft.model" />
+    <!--<meta-data android:name="com.orm.SugarApp" />-->
+    <!--<meta-data android:name="DATABASE" android:value="cleverdraft.db" />-->
+    <!--<meta-data android:name="VERSION" android:value="4" />-->
+    <!--<meta-data android:name="QUERY_LOG" android:value="true" />-->
+    <!--<meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="ru.rkhamatyarov.cleverdraft.model" />-->
 </manifest>

@@ -1,6 +1,7 @@
 package ru.rkhamatyarov.cleverdraft
 
 import android.content.Context
+import android.util.Log
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import org.junit.Before
@@ -11,7 +12,6 @@ import org.robolectric.RuntimeEnvironment
 import ru.rkhamatyarov.cleverdraft.model.Note
 import java.util.*
 import kotlin.properties.Delegates
-import com.orm.SugarContext
 import org.junit.After
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -32,9 +32,8 @@ class NoteDBTest {
     fun setup() {
 
         context = RuntimeEnvironment.application
-        SugarContext.init(context)
         noteDAO = NoteDAO(context)
-    };
+    }
 
     private fun getNote(content: String): Note = Note(content, Calendar.getInstance().getTime())
 
@@ -44,10 +43,9 @@ class NoteDBTest {
         val id = noteDAO.insertNote(getNote(content))
         val insertedNote: Note = noteDAO.getNote(id)
         assertNotNull(insertedNote)
-        val note: Note = noteDAO.getNote(insertedNote.id.toInt())
+        val note: Note = noteDAO.getNote(insertedNote.id)
         assertNotNull(note)
         assertEquals(note.content, content)
-        SugarContext.terminate()
     }
 
     @Test
@@ -63,7 +61,7 @@ class NoteDBTest {
             noteDAO.insertNote(note)
         }
 
-        val allNotes = noteDAO.getAllNotes
+        val allNotes = noteDAO.getAllNotes()
         assertNotNull(allNotes)
         assertEquals(notes.size, allNotes.size)
     }
@@ -72,23 +70,18 @@ class NoteDBTest {
     fun removeNotes() {
         val content = "removeContent"
         val note = getNote(content)
-        val id = noteDAO.insertNote(note)
-        assertNotNull(id)
 
-        val noteForRm = noteDAO.getNote(id)
+        val insertId = noteDAO.insertNote(note)
+        assertNotNull(insertId)
+
+        val noteForRm = noteDAO.getNote(insertId)
+
         assertNotNull(noteForRm)
         assertEquals(noteForRm.content, content)
 
-        val isRemove = noteDAO.removeNote(note)
+        val isRemove = noteDAO.removeNote(noteForRm)
         assertEquals(true, isRemove)
 
     }
-
-
-    @After
-    fun terminate() {
-        SugarContext.terminate()
-    }
-
 
 }

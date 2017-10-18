@@ -1,11 +1,9 @@
 package ru.rkhamatyarov.cleverdraft.presenter
 
 import android.widget.EditText
-import android.widget.Toast
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 
@@ -44,7 +42,7 @@ class MainPresenterTest {
         `when`(mockEditText.text.toString()).thenReturn("Test_true")
         val arrayPosition: Int = 10
 
-        `when`(mockModel.insertNote(any())).thenReturn(arrayPosition)
+        `when`(mockModel.insertNote(any())).thenReturn(arrayPosition.toLong())
 
         mainPresenter.clickNewNote(mockEditText)
 

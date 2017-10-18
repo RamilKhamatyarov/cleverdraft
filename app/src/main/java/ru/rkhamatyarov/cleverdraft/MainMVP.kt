@@ -24,7 +24,7 @@ interface   MainMVP {
         fun notifyItemRemoved(position: Int)
         fun notifyDataSetChanged()
         fun notifyItemInserted(layoutPosition: Int)
-        fun notifyItemRangeChanged(startPosition: Int, count: Int)
+        fun notifyItemRangeChanged(startPosition: Int, count: Int?)
         fun clearEditText()
     }
 
@@ -43,17 +43,17 @@ interface   MainMVP {
 //        fun setModel(model: ProvidedModelOps)
         fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder
         fun bindViewHolder(holder: NotesViewHolder, position: Int)
-        fun getNotesCount(): Int
+        fun getNotesCount(): Int?
         fun clickNewNote(editText: EditText)
-        fun clickDeleteNote(note: Note, adapterPostion: Int, layoutPosition: Int)
+        fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int)
     }
 
     interface ProvidedModelOps {
         fun onDestroy(isChangingConfiguration: Boolean)
-        fun insertNote(note: Note): Int
+        fun insertNote(note: Note): Long
         fun loadData(): Boolean
         fun removeNote(note: Note, adapterPostion: Int): Boolean
         fun getNote(position: Int): Note
-        fun getNotesCount(): Int
+        fun getNotesCount(): Int?
     }
 }
