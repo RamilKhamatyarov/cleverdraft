@@ -28,7 +28,7 @@ class NoteConstants {
         val TIME_COL = "time"
 
 
-
+        // set $variables
         val CREATE_NOTES_TABLE = CREATE_TABLE + NOTES_TABLE_NAME + "(" +
                 NOTES_TABLE.ID.getName() + TYPE_INT + NOT_NULL + PRIMARY_KEY + COMMA_SPACE +
                 NOTES_TABLE.CONTENT.getName() + TYPE_TEXT + NOT_NULL + COMMA_SPACE +

@@ -8,13 +8,13 @@ import ru.rkhamatyarov.cleverdraft.data.NoteDAO
  */
 open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.ProvidedModelOps{
 
-//    private lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+    //    private lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
     private var noteDAO: NoteDAO?
-    var notes: ArrayList<Note>? = null
+    lateinit var notes: ArrayList<Note>
 
     /*Main constructor, called by Activity during MVP setup*/
     init {
-        noteDAO = NoteDAO(mainPresenter!!.getApplicationContext())
+        noteDAO = NoteDAO(mainPresenter?.getApplicationContext())
     }
 
     /*Test contructor. Called only during unit testing*/
@@ -27,7 +27,7 @@ open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.
         if (!isChangingConfiguration) {
             mainPresenter = null
             noteDAO = null
-            notes = null
+            notes.clear()
 
         }
     }
@@ -43,35 +43,63 @@ open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.
     }
 
     override fun loadData(): Boolean {
-        notes = noteDAO?.getAllNotes()
-        return notes != null
+        notes = checkNotNull(noteDAO?.getAllNotes())
+        return true
     }
 
-    override fun getNote(position: Int): Note {
-        return notes!!.get(position)
+    override fun getNote(position: Int): Note? {
+
+
+        return notes.get(position)
     }
 
     override fun getNotesCount(): Int? {
-        if (notes !=null) return notes?.size
+        if (true) return notes.size
         return 0
     }
 
+    override fun updateNote(note: Note, adapterPosition: Int): Boolean {
+        val countUpd = noteDAO?.updateNote(note)
+
+
+        if (countUpd == 1) {
+            notes[adapterPosition] = note
+
+            val noteIndex = getNotePosition(note)
+            if (noteIndex != -1) {//To change body of created functions use File | Settings | File Templates.
+                return true
+            }
+        }
+
+        return false
+    }
 
     override fun removeNote(note: Note, adapterPosition: Int): Boolean {
         val isRemove = noteDAO?.removeNote(note)
 
         if (isRemove != null && isRemove) {
 
-            notes?.removeAt(adapterPosition)
+            notes.removeAt(adapterPosition)
             return true
         }
         return false
     }
 
-    fun getNotePosition(note: Note): Int{
-        for (item in this.notes!!)
+    override fun getNoteById(id: Long): Note? {
+        for (item in this.notes){
+            if (id == item.id) return item
+        }
+        return null
+    }
+
+    override fun getNotePosition(note: Note): Int? {
+        for (item in this.notes)
             if (note.id == item.id)
-                return notes!!.indexOf(item)
+                return notes.indexOf(item)
         return -1
     }
+
+
+
+
 }

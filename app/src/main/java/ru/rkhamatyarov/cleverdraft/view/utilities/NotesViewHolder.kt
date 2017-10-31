@@ -18,7 +18,7 @@ import ru.rkhamatyarov.cleverdraft.R
  class NotesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
       lateinit var container: RelativeLayout
       lateinit var content: TextView
-      lateinit var date:TextView
+      lateinit var date: TextView
       lateinit var butonDelete: ImageButton
 
       init {

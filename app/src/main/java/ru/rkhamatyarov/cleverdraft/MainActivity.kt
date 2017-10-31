@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
      * Use a [StateMaintainer] to maintain the
      * Presenter and Model instances between configuration changes.
      */
+
     private fun setupMVP() {
         if (mStateMaintainer.firstTimeIn()) {
             initialize()
@@ -120,13 +121,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         when (v.id) {
             R.id.fab -> {
                 // Add new note
-                mainTextNewNote?.let { mainPresenter.clickNewNote(it) }
+                mainTextNewNote?.let { mainPresenter.switchCreateOrUpdate(it) }
             }
         }
     }
 
     override fun showToast(toast: Toast) {
         toast.show()
+    }
+
+    override fun setEditText(content: String){
+        checkNotNull(mainTextNewNote).setText(content)
     }
 
     override fun clearEditText() {
@@ -151,6 +156,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     override fun notifyItemInserted(adapterPos: Int) {
         mainListAdapter?.notifyItemInserted(adapterPos)
+    }
+
+    override fun notifyItemChanged(adapterPos: Int) {
+        mainListAdapter?.notifyItemChanged(adapterPos)
     }
 
     override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int?) {

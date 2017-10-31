@@ -14,7 +14,7 @@ import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 
 interface   MainMVP {
 
-    interface ViewOps{
+    interface ViewOps {
         fun getAppContext(): Context
         fun getActContext(): Context
         fun showToast(toast: Toast)
@@ -25,6 +25,8 @@ interface   MainMVP {
         fun notifyDataSetChanged()
         fun notifyItemInserted(layoutPosition: Int)
         fun notifyItemRangeChanged(startPosition: Int, count: Int?)
+        fun notifyItemChanged(adapterPos: Int)
+        fun setEditText(content: String)
         fun clearEditText()
     }
 
@@ -44,8 +46,12 @@ interface   MainMVP {
         fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder
         fun bindViewHolder(holder: NotesViewHolder, position: Int)
         fun getNotesCount(): Int?
-        fun clickNewNote(editText: EditText)
+        fun newNote(editText: EditText)
+        fun updateNote (editText: EditText)
+        fun switchCreateOrUpdate(editText: EditText)
+
         fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int)
+        fun clickOpenNote(adapterPosition: Int, layoutPosition: Int)
     }
 
     interface ProvidedModelOps {
@@ -53,7 +59,10 @@ interface   MainMVP {
         fun insertNote(note: Note): Long
         fun loadData(): Boolean
         fun removeNote(note: Note, adapterPostion: Int): Boolean
-        fun getNote(position: Int): Note
+        fun updateNote(note: Note, adapterPosition: Int): Boolean
+        fun getNote(position: Int): Note?
+        fun getNoteById(id: Long): Note?
         fun getNotesCount(): Int?
+        fun getNotePosition(note: Note): Int?
     }
 }

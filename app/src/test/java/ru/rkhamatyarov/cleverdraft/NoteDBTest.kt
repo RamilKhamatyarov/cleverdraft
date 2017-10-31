@@ -84,4 +84,23 @@ class NoteDBTest {
 
     }
 
+    @Test
+    fun updateNotes() {
+        val content = "updateNote"
+        val note = getNote(content)
+
+        val insertId = noteDAO.insertNote(note)
+        assertNotNull(insertId)
+
+        val noteForUpd = noteDAO.getNote(insertId)
+
+        assertNotNull(noteForUpd)
+        assertEquals(noteForUpd.content, content)
+
+        val countUpd = noteDAO.updateNote(noteForUpd)
+        assertEquals(1, countUpd)
+
+    }
+
+
 }

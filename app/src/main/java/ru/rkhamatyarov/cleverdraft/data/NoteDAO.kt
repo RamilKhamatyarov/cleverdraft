@@ -90,10 +90,14 @@ class NoteDAO(ctx: Context?) {
         return note
     }
 
-    fun updateNote(note: Note): Long {
+    fun updateNote(note: Note): Int {
         val db = getWritableDb()
 
-        return 0
+        val updCount = db.update(NoteConstants.NOTES_TABLE_NAME, note.getContentValues(), NoteConstants.SELECT_ID_BASED,
+                arrayOf(note.id.toString()))
+
+        db.close()
+        return updCount
     }
 
 

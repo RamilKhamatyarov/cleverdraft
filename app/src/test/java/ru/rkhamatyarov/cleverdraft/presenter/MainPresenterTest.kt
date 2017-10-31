@@ -46,10 +46,10 @@ class MainPresenterTest {
 
         mainPresenter.clickNewNote(mockEditText)
 
-        verify(mockModel).insertNote(any());
+        verify(mockModel).insertNote(any())
         verify(mockView).notifyItemInserted(eq(arrayPosition.inc()))
         verify(mockView).notifyItemRangeChanged(eq(arrayPosition), anyInt())
-        verify(mockView, never())!!.showToast(any())
+        verify(mockView, never())?.showToast(any())
 
     }
 
@@ -61,6 +61,9 @@ class MainPresenterTest {
         `when`(mockEditText.text.toString()).thenReturn("Test_true")
         `when`(mockModel.insertNote(any())).thenReturn(-1)
         mainPresenter.clickNewNote(mockEditText)
+        verify(mockView).showToast(any())
+
+        mainPresenter.clickOpenNote(0, 0)
         verify(mockView).showToast(any())
 
     }

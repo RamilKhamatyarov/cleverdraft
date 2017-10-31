@@ -14,7 +14,7 @@ import ru.rkhamatyarov.cleverdraft.BuildConfig
 import ru.rkhamatyarov.cleverdraft.data.NoteDAO
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 import java.util.*
-import kotlin.properties.Delegates
+import kotlin.collections.ArrayList
 
 /**
  * Created by Asus on 11.09.2017.
@@ -55,6 +55,20 @@ class MainModelTest {
     }
 
     @Test
+    fun updateNote(){
+         val note = makeNote("test updated")
+         val insertId = noteDAO.insertNote(note)
+        mainModel.notes = ArrayList<Note>()
+        mainModel.notes?.add(noteDAO.getNote(insertId))
+
+        val noteForUpd = noteDAO.getNote(insertId)
+        assertTrue(mainModel.updateNote(noteForUpd, 0))
+
+        val note2 = makeNote("test update2")
+        assertFalse(mainModel.updateNote(note2, 0))
+    }
+
+    @Test
     fun removeNote() {
         val note = makeNote("test content")
         val insertId = noteDAO.insertNote(note)
@@ -67,6 +81,22 @@ class MainModelTest {
         val note2 = makeNote("test content2")
         assertFalse(mainModel.removeNote(note2, 0))
 
+    }
+
+    @Test
+    fun getNoteById(){
+        var note = makeNote("test content")
+        val insertId = noteDAO.insertNote(note)
+        note = noteDAO.getNote(insertId)
+        mainModel.notes = ArrayList<Note>()
+        mainModel.notes.add(note)
+
+        val note2 = mainModel.getNoteById(insertId)
+        assertEquals(note, note2)
+
+        mainModel.removeNote(note, 0)
+        val note3 = mainModel.getNoteById(insertId)
+        assertNull(note3)
     }
 
     private fun makeNote(content: String): Note {
