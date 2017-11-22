@@ -5,7 +5,7 @@ import dagger.Provides
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.MainActivity
+import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
 /**
  * Created by Asus on 19.09.2017.

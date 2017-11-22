@@ -2,7 +2,6 @@ package ru.rkhamatyarov.cleverdraft
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import ru.rkhamatyarov.cleverdraft.utililities.di.AppComponent
 import ru.rkhamatyarov.cleverdraft.utililities.di.AppModule
 import ru.rkhamatyarov.cleverdraft.utililities.di.DaggerAppComponent

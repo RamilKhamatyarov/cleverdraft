@@ -3,8 +3,7 @@ package ru.rkhamatyarov.cleverdraft.data
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ru.rkhamatyarov.cleverdraft.model.Note
-import ru.rkhamatyarov.cleverdraft.utililities.NoteConstants
+import ru.rkhamatyarov.cleverdraft.utilities.NoteConstants
 
 /**
  * Created by Asus on 09.10.2017.

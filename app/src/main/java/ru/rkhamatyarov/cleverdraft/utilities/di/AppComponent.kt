@@ -2,8 +2,8 @@ package ru.rkhamatyarov.cleverdraft.utililities.di
 
 import android.app.Application
 import dagger.Component
-import dagger.Module
-import dagger.Provides
+import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityComponent
+import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
 import javax.inject.Singleton
 
 /**
@@ -16,5 +16,6 @@ import javax.inject.Singleton
 interface AppComponent {
     fun application(): Application
     fun getMainComponent(mainActivityModule: MainActivityModule): MainActivityComponent
+    fun getDraftListComponent(draftListActivityModule: DraftListActivityModule): DraftListActivityComponent
 
 }

@@ -6,10 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 
 import ru.rkhamatyarov.cleverdraft.model.Note
-import ru.rkhamatyarov.cleverdraft.utililities.NoteConstants
+import ru.rkhamatyarov.cleverdraft.utilities.NoteConstants
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.system.exitProcess
 
 
 /**

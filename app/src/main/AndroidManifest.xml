@@ -17,21 +17,27 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:name="MainActivity"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:name="ru.rkhamatyarov.cleverdraft.view.MainActivity"
+
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize">
+
             <intent-filter android:label="@string/launcher_name">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="ru.rkhamatyarov.cleverdraft.view.DraftListActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:parentActivityName="ru.rkhamatyarov.cleverdraft.view.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ru.rkhamatyarov.cleverdraft.view.MainActivity"/>
+        </activity>
+        <receiver android:name=".presenter.utilities.DateTimeReceiver" android:process=":remote" />
     </application>
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
 
-    <!--Creating db with Sugar ORM-->
-    <!--<meta-data android:name="com.orm.SugarApp" />-->
-    <!--<meta-data android:name="DATABASE" android:value="cleverdraft.db" />-->
-    <!--<meta-data android:name="VERSION" android:value="4" />-->
-    <!--<meta-data android:name="QUERY_LOG" android:value="true" />-->
-    <!--<meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="ru.rkhamatyarov.cleverdraft.model" />-->
 </manifest>

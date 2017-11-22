@@ -1,7 +1,9 @@
 package ru.rkhamatyarov.cleverdraft
 
 import android.app.AlertDialog
+import android.app.FragmentManager
 import android.content.Context
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
@@ -12,7 +14,7 @@ import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
  * Created by Asus on 03.09.2017.
  */
 
-interface   MainMVP {
+interface  MainMVP {
 
     interface ViewOps {
         fun getAppContext(): Context
@@ -52,6 +54,9 @@ interface   MainMVP {
 
         fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int)
         fun clickOpenNote(adapterPosition: Int, layoutPosition: Int)
+
+        fun setDateTimePicker(fragmentManager: FragmentManager)
+        fun startListActivity()
     }
 
     interface ProvidedModelOps {

@@ -1,31 +1,44 @@
-package ru.rkhamatyarov.cleverdraft
+package ru.rkhamatyarov.cleverdraft.view
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import ru.rkhamatyarov.cleverdraft.ChiefApp
+import ru.rkhamatyarov.cleverdraft.MainMVP
+import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
+import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
+import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
+import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
+import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import javax.inject.Inject
 
-import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
-import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
+/**
+ * Created by Asus on 23.07.2017.
+ */
 
-import ru.rkhamatyarov.cleverdraft.utililities.StateMaintainer
-import ru.rkhamatyarov.cleverdraft.utililities.di.*
+class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps  {
 
-class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
     private var mainListAdapter: ListNotes? = null
     private var mProgress: ProgressBar? = null
+    private var toolbar: Toolbar? = null
 
     override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
@@ -43,7 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupMVP()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_notepad)
 
         setupViews()
 
@@ -58,15 +71,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
      * Setup the Views
      */
     private fun setupViews() {
-        /*val toolbar:Toolbar? = findViewById(R.id.toolbar) as Toolbar?
-        setSupportActionBar(toolbar)*/
 
-        val fab = findViewById(R.id.fab)
+        val fab = findViewById(R.id.list_fab)
         fab.setOnClickListener(this)
 
-        mainTextNewNote = findViewById(R.id.edit_note) as EditText
         mainListAdapter = ListNotes()
-        mProgress = findViewById(R.id.progressbar) as ProgressBar?
+        mProgress = findViewById(R.id.list_progressbar) as ProgressBar?
 
         val mList = findViewById(R.id.list_notes) as RecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
@@ -75,6 +85,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         mList.layoutManager = linearLayoutManager
         mList.adapter = mainListAdapter
         mList.itemAnimator = DefaultItemAnimator()
+
+        toolbar = findViewById(R.id.list_toolbar) as? Toolbar // Attaching the layout to the toolbar object
+        if (toolbar != null) {
+            setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
+
+            // Get a support ActionBar corresponding to this toolbar
+            val ab = supportActionBar
+
+            // Enable the Up button
+            ab?.setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     /**
@@ -83,12 +104,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
      * Presenter and Model instances between configuration changes.
      */
 
-    private fun setupMVP() {
-        if (mStateMaintainer.firstTimeIn()) {
-            initialize()
-        } else {
-            reinitialize()
-        }
+    private fun setupMVP() = if (mStateMaintainer.firstTimeIn()) {
+        initialize()
+    } else {
+        reinitialize()
     }
 
 
@@ -99,21 +118,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
 
     private fun reinitialize() {
-        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
-//        var model: MainMVP.ProvidedModelOps = MainModel(mainPresenter)
+        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as MainMVP.ProvidedPresenterOps
         mainPresenter.setView(this)
-//        (mainPresenter as MainPresenter).mainModel = model
-
-//        mStateMaintainer.put(mainPresenter)
-//        mStateMaintainer.put(model)
-//        if (mainPresenter == null)
-//            initialize()
     }
 
 
     private fun setupComponent() {
-        ChiefApp.get(this).getAppComponent().getMainComponent(MainActivityModule(this)).inject(this)
-
+        ChiefApp.get(this).getAppComponent().getDraftListComponent(DraftListActivityModule(this)).inject(this)
     }
 
 
@@ -146,7 +157,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         mProgress?.visibility = View.GONE
     }
 
-    fun showAlert(dialog: AlertDialog) {
+    fun showAlert(dialog: android.support.v7.app.AlertDialog) {
         dialog.show()
     }
 
@@ -201,5 +212,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     override fun getAppContext(): Context = applicationContext
 
     override fun getActContext(): Context = this
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val b = when (item.itemId) {
+            R.id.action_settings -> {
+                true
+            }
+            R.id.action_reminder -> {
+                mainPresenter.setDateTimePicker(fragmentManager)
+//                val dateTimePicker: DialogFragment = DatePickerFragment()
+//                dateTimePicker.show(fragmentManager, "timePicker")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return b
+    }
+
 
 }

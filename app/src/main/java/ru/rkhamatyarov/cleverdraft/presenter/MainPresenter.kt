@@ -1,8 +1,13 @@
 package ru.rkhamatyarov.cleverdraft.presenter
 
+
 import android.app.AlertDialog
+import android.app.DialogFragment
+
+import android.app.FragmentManager
 import android.content.Context
 import android.os.AsyncTask
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +16,17 @@ import android.widget.Toast
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.model.Note
+import ru.rkhamatyarov.cleverdraft.view.utilities.DatePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.Intent
+import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
+import ru.rkhamatyarov.cleverdraft.view.MainActivity
+
+
+
 
 /**
  * Created by Asus on 03.09.2017.
@@ -34,6 +46,8 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     private var adapterPos = -1
     private var layoutPos = -1
     private var isUpdate = false;
+
+    private var alarm: Alarm? = null
 
 //    private lateinit var applicationContext: Context
 //    private lateinit var activityContext: Context
@@ -67,6 +81,10 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         holder.butonDelete.setOnClickListener({ v -> clickDeleteNote(note, holder.adapterPosition, holder.layoutPosition)})
 
         holder.container.setOnClickListener({v -> clickOpenNote(holder.adapterPosition, holder.layoutPosition)})
+
+//        holder.container.setOnClickListener(({v -> setDateTimePicker(holder)}))
+
+
     }
 
     override fun getNotesCount(): Int? = mainModel?.getNotesCount()
@@ -103,6 +121,7 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
                         getView().clearEditText()
                         getView().notifyItemInserted(adapterPosition + 1)
                         getView().notifyItemRangeChanged(adapterPosition, mainModel?.getNotesCount())
+                        getView().hideProgress()
                     } else {
                         // Inform about error
                         getView().hideProgress()
@@ -221,6 +240,9 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
 
             override fun onPostExecute(result: Boolean?) {
                 if (result != null && result) {
+                    val intent = Intent(getActivityContext(), MainActivity::class.java)
+                    getActivityContext().startActivity(intent)
+                    
                     note?.content?.let { getView().setEditText(it) }
                 }
             }
@@ -305,6 +327,27 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         } catch (e: NullPointerException){
             e.printStackTrace()
         }
+    }
+
+
+    override fun setDateTimePicker(fragmentManager: FragmentManager) {
+        val calendar: Calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val min = calendar.get(Calendar.MINUTE)
+
+        val dateTimePicker: DialogFragment = DatePickerFragment.newInstance(Calendar.getInstance().getTime())
+        dateTimePicker.show(fragmentManager, "dateTimePicker")
+//        println("setDateTimePicker newInstance")
+//        dateTimePicker.setTargetFragment()
+//        dateTimePicker.show(getSupportFragmentManager(), DATEPICKER_TAG);
+    }
+
+    override fun startListActivity() {
+        val intent = Intent(getActivityContext(), DraftListActivity::class.java)
+        getActivityContext().startActivity(intent)
     }
 
     override fun getApplicationContext(): Context = getView().getAppContext()

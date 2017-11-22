@@ -1,4 +1,4 @@
-package ru.rkhamatyarov.cleverdraft.utililities
+package ru.rkhamatyarov.cleverdraft.utilities
 
 import android.app.Fragment
 import android.app.FragmentManager

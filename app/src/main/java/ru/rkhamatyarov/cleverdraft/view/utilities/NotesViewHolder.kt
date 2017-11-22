@@ -20,6 +20,7 @@ import ru.rkhamatyarov.cleverdraft.R
       lateinit var content: TextView
       lateinit var date: TextView
       lateinit var butonDelete: ImageButton
+      lateinit var buttonAlarm: ImageButton
 
       init {
           super.itemView
@@ -31,5 +32,7 @@ import ru.rkhamatyarov.cleverdraft.R
            content = view.findViewById<TextView>(R.id.note_text) as TextView
            date = view.findViewById<TextView>(R.id.note_date) as TextView
            butonDelete = view.findViewById<ImageButton>(R.id.btn_delete) as ImageButton
+
+//           buttonAlarm = view.findViewById<ImageButton>(R.id.action_reminder) as ImageButton
       }
 }
