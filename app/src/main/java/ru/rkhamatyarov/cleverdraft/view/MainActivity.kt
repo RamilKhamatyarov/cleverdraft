@@ -1,6 +1,7 @@
 package ru.rkhamatyarov.cleverdraft.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -68,28 +69,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
         mainTextNewNote = findViewById(R.id.edit_note) as EditText
 //        mainListAdapter = ListNotes()
+
+        insertIntentText()
+
         mProgress = findViewById(R.id.progressbar) as ProgressBar?
 
-//        val mList = findViewById(R.id.list_notes) as RecyclerView
-//        val linearLayoutManager = LinearLayoutManager(this)
-//        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-//
-//        mList.layoutManager = linearLayoutManager
-//        mList.adapter = mainListAdapter
-//        mList.itemAnimator = DefaultItemAnimator()
 
         toolbar = findViewById(R.id.main_toolbar) as? Toolbar // Attaching the layout to the toolbar object
         if (toolbar != null) {
             setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
-
-            // Get a support ActionBar corresponding to this toolbar
-            val ab = supportActionBar
-
-            // Enable the Up button
-            ab?.setDisplayHomeAsUpEnabled(true)
         }
 
 
+    }
+
+    private fun insertIntentText() {
+        val intent: Intent = getIntent()
+        val message = intent.getStringExtra(MainPresenter.EXTRA_MESSAGE)
+        mainTextNewNote?.setText(message)
     }
 
     /**
@@ -157,47 +154,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     override fun notifyItemRemoved(position: Int) {
-//        mainListAdapter?.notifyItemRemoved(position)
     }
 
     override fun notifyItemInserted(adapterPos: Int) {
-//        mainListAdapter?.notifyItemInserted(adapterPos)
+
     }
 
     override fun notifyItemChanged(adapterPos: Int) {
-//        mainListAdapter?.notifyItemChanged(adapterPos)
+
     }
 
     override fun notifyItemRangeChanged(positionStart: Int, itemCount: Int?) {
-        /*if (itemCount != null) {
-            mainListAdapter?.notifyItemRangeChanged(positionStart, itemCount)
-        }*/
+
     }
 
     override fun notifyDataSetChanged() {
-//        mainListAdapter?.notifyDataSetChanged()
+
     }
-
-    /*private inner class ListNotes : RecyclerView.Adapter<NotesViewHolder>() {
-
-
-        override fun getItemCount(): Int {
-            val count = mainPresenter.getNotesCount()
-            if (count != null) {
-                return count
-            }
-            return 0
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
-            return mainPresenter.createViewHolder(parent, viewType)
-        }
-
-        override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
-            mainPresenter.bindViewHolder(holder, position)
-        }
-
-    }*/
 
     companion object {
 

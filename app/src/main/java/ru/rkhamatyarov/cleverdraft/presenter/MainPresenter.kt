@@ -22,6 +22,7 @@ import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
+import ru.rkhamatyarov.cleverdraft.presenter.async.NewNoteTask
 import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
 import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
@@ -48,9 +49,9 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     private var isUpdate = false;
 
     private var alarm: Alarm? = null
-
-//    private lateinit var applicationContext: Context
-//    private lateinit var activityContext: Context
+    companion object {
+        const val EXTRA_MESSAGE = "ru.rkhamatyarov.cleverdraft.presenter.MESSAGE"
+    }
 
     init {
        mainView = WeakReference<MainMVP.ViewOps>(view)
@@ -106,32 +107,8 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         val noteText: String = editText.text.toString()
 
         if (!noteText.isEmpty()) {
-            object : AsyncTask<Void, Void, Int>() {
-                override fun doInBackground(vararg params: Void): Int? {
-                    // Insert note in Model, returning result
+            NewNoteTask(mainModel, mainView, noteText).execute()
 
-                    return mainModel?.insertNote(makeNote(noteText))?.toInt()
-
-                }
-
-                override fun onPostExecute(adapterPosition: Int) = try {
-
-                    if (adapterPosition > -1) {
-                        // Insert note
-                        getView().clearEditText()
-                        getView().notifyItemInserted(adapterPosition + 1)
-                        getView().notifyItemRangeChanged(adapterPosition, mainModel?.getNotesCount())
-                        getView().hideProgress()
-                    } else {
-                        // Inform about error
-                        getView().hideProgress()
-                        getView().showToast(makeToast("Error creating note [$noteText]"))
-                    }
-
-                } catch (e: NullPointerException) {
-                    e.printStackTrace()
-                }
-            }.execute()
         } else {
             try{
                 getView().showToast(makeToast("Cannot add a blank note!"))
@@ -241,9 +218,12 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
             override fun onPostExecute(result: Boolean?) {
                 if (result != null && result) {
                     val intent = Intent(getActivityContext(), MainActivity::class.java)
+                    val message: String? = note?.content
+
+                    intent.putExtra(EXTRA_MESSAGE, message)
                     getActivityContext().startActivity(intent)
-                    
-                    note?.content?.let { getView().setEditText(it) }
+
+//                    note?.content?.let { getView().setEditText(it) }
                 }
             }
 
@@ -348,6 +328,7 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     override fun startListActivity() {
         val intent = Intent(getActivityContext(), DraftListActivity::class.java)
         getActivityContext().startActivity(intent)
+
     }
 
     override fun getApplicationContext(): Context = getView().getAppContext()
