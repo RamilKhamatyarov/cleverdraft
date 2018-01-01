@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
-import ru.rkhamatyarov.cleverdraft.presenter.async.NewNoteTask
+import ru.rkhamatyarov.cleverdraft.presenter.async.*
 import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
 import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
@@ -124,38 +124,12 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         val noteText: String = editText.text.toString()
 
         if (!noteText.isEmpty()) {
-            object : AsyncTask<Void, Void, Int>() {
-                override fun doInBackground(vararg params: Void): Int? {
-                    // Insert note in Model, returning result
-                    val note = mainModel?.getNote(adapterPos)
-
-                    note?.content = noteText
-                    note?.let { mainModel?.updateNote(it, adapterPos) }
-
-                    return adapterPos
-                }
-
-                override fun onPostExecute(adapterPosition: Int) = try {
-                    if  (adapterPosition > -1) {
-                        getView().hideProgress()
-                        // Update note
-                        getView().notifyDataSetChanged()
-                        getView().clearEditText()
-
-                        adapterPos = -1
-                        layoutPos = -1
-                        isUpdate = false
-
-                    }else{
-                        // Inform about error
-                        getView().hideProgress()
-                        getView().showToast(makeToast("Error creating note [$noteText]"))
-                    }
-
-                } catch (e: NullPointerException) {
-                    e.printStackTrace()
-                }
-            }.execute()
+            val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView, noteText)
+            updateNoteTask.adapterPos = adapterPos
+            updateNoteTask.layoutPos = layoutPos
+            updateNoteTask.isUpdate = isUpdate
+            TODO("make noteText as task setter field")
+            updateNoteTask.execute()
         } else {
             try{
                 getView().showToast(makeToast("Cannot add a blank note!"))
@@ -168,16 +142,7 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     private fun loadData() {
         try{
             getView().showProgress()
-            object: AsyncTask<Void, Void, Boolean>(){
-                override fun doInBackground(vararg p0: Void): Boolean? = mainModel?.loadData()
-                override fun onPostExecute(result: Boolean) {
-                    getView().hideProgress()
-                    if (result)
-                        getView().notifyDataSetChanged()
-                    else
-                        getView().showToast(makeToast("Error loading data"))
-                }
-            }.execute()
+            LoadDataTask(mainModel, mainView).execute()
 
         } catch (e: NullPointerException){
             e.printStackTrace()
@@ -203,31 +168,12 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {
         getView().showProgress()
 
-        object : AsyncTask<Void, Void, Boolean?>() {
-            var note: Note? = null
-            override fun doInBackground(vararg params: Void?): Boolean? {
-                note = checkNotNull(mainModel).getNote(adapterPosition)
+        val openNoteTask: OpenNoteTask = OpenNoteTask(mainModel, mainView)
+        openNoteTask.adapterPos = adapterPosition
+        openNoteTask.layoutPos = layoutPosition
+        openNoteTask.isUpdate = isUpdate
 
-                adapterPos = adapterPosition
-                layoutPos = layoutPosition
-                isUpdate = true
-
-                return note != null
-            }
-
-            override fun onPostExecute(result: Boolean?) {
-                if (result != null && result) {
-                    val intent = Intent(getActivityContext(), MainActivity::class.java)
-                    val message: String? = note?.content
-
-                    intent.putExtra(EXTRA_MESSAGE, message)
-                    getActivityContext().startActivity(intent)
-
-//                    note?.content?.let { getView().setEditText(it) }
-                }
-            }
-
-        }.execute()
+        openNoteTask.execute()
     }
 
     override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int) =
@@ -261,22 +207,13 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
      */
     fun deleteNote(note: Note, adapterPosition: Int, layoutPosition: Int) {
         getView().showProgress()
-        object : AsyncTask<Void, Void, Boolean?>() {
-            // Delete note on Model, returning result
-            override fun doInBackground(vararg params: Void): Boolean? = mainModel?.removeNote(note, adapterPosition)
 
-            override fun onPostExecute(result: Boolean?) {
-                getView().hideProgress()
-                if (result != null && result) {
-                    // Remove item from RecyclerView
-                    getView().notifyItemRemoved(layoutPosition)
-                    getView().showToast(makeToast("Note deleted."))
-                } else {
-                    // Inform about error
-                    getView().showToast(makeToast("Error deleting note[" + note.id + "]"))
-                }
-            }
-        }.execute()
+        val deleteNoteTask: DeleteNoteTask = DeleteNoteTask(mainModel, mainView)
+        deleteNoteTask.adapterPos = adapterPosition
+        deleteNoteTask.layoutPos = layoutPosition
+        deleteNoteTask.note = note
+
+        deleteNoteTask.execute()
     }
 
     override fun onDestroy(isChangingConfiguration: Boolean) {
@@ -286,27 +223,6 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         if (!isChangingConfiguration) mainModel = null
 
 
-    }
-
-    fun removeNote(note: Note, adapterPosition: Int, layoutPosition: Int){
-
-        getView().showProgress()
-        try{
-            object: AsyncTask<Void, Void, Boolean?>(){
-                override fun doInBackground(vararg p0: Void): Boolean? = mainModel?.removeNote(note, adapterPosition)
-                override fun onPostExecute(result: Boolean?) {
-                    getView().hideProgress()
-                    if (result != null && result) {
-                        getView().notifyItemRemoved(layoutPosition)
-                        getView().showToast(makeToast("Note removed"))
-                    }else
-                        getView().showToast(makeToast("Error removing data["+note.id+"]"))
-                }
-            }.execute()
-
-        } catch (e: NullPointerException){
-            e.printStackTrace()
-        }
     }
 
 
