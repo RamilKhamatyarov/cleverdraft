@@ -6,13 +6,15 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import ru.rkhamatyarov.cleverdraft.BuildConfig
+import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.data.NoteDAO
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
+import ru.rkhamatyarov.cleverdraft.view.MainActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -24,6 +26,7 @@ import kotlin.collections.ArrayList
 class MainModelTest {
     private lateinit var mainModel: MainModel
     private lateinit var noteDAO: NoteDAO
+    private lateinit var mockView: MainMVP.ViewOps
     private lateinit var mockPresenter: MainPresenter
 
     @Before
@@ -32,11 +35,12 @@ class MainModelTest {
         val context: Context = RuntimeEnvironment.application
         noteDAO = NoteDAO(context)
 
-        mockPresenter = Mockito.mock(MainPresenter::class.java)
+        mockView = Mockito.mock( MainMVP.ViewOps::class.java )
+        mockPresenter = MainPresenter(mockView)
+
         mainModel = MainModel(mockPresenter, noteDAO)
         mainModel.notes = ArrayList()
 
-        reset(mockPresenter)
     }
 
     @Test
@@ -44,8 +48,8 @@ class MainModelTest {
         val noteLength = 20
 
         for (item: Int in 1..noteLength) noteDAO.insertNote(makeNote("test content #"+item))
-        mainModel.loadData();
-        assertEquals(mainModel.notes?.size, noteLength)
+        mainModel.loadData()
+        assertEquals(mainModel.notes.size, noteLength)
 
     }
 
@@ -59,7 +63,7 @@ class MainModelTest {
          val note = makeNote("test updated")
          val insertId = noteDAO.insertNote(note)
         mainModel.notes = ArrayList<Note>()
-        mainModel.notes?.add(noteDAO.getNote(insertId))
+        mainModel.notes.add(noteDAO.getNote(insertId))
 
         val noteForUpd = noteDAO.getNote(insertId)
         assertTrue(mainModel.updateNote(noteForUpd, 0))
@@ -73,7 +77,7 @@ class MainModelTest {
         val note = makeNote("test content")
         val insertId = noteDAO.insertNote(note)
         mainModel.notes = ArrayList<Note>()
-        mainModel.notes?.add(noteDAO.getNote(insertId))
+        mainModel.notes.add(noteDAO.getNote(insertId))
 
         val noteForRm = noteDAO.getNote(insertId)
         assertTrue(mainModel.removeNote(noteForRm, 0))

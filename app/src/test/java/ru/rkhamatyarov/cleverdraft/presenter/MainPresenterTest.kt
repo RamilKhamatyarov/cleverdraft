@@ -40,11 +40,11 @@ class MainPresenterTest {
     fun testClickNewNote(){
         val mockEditText: EditText = mock(EditText::class.java, RETURNS_DEEP_STUBS)
         `when`(mockEditText.text.toString()).thenReturn("Test_true")
-        val arrayPosition: Int = 10
+        val arrayPosition = 10
 
         `when`(mockModel.insertNote(any())).thenReturn(arrayPosition.toLong())
 
-        mainPresenter.clickNewNote(mockEditText)
+        mainPresenter.switchCreateOrUpdate(mockEditText)
 
         verify(mockModel).insertNote(any())
         verify(mockView).notifyItemInserted(eq(arrayPosition.inc()))
@@ -60,7 +60,7 @@ class MainPresenterTest {
         `when`(mockModel.insertNote(any())).thenReturn(-1)
         `when`(mockEditText.text.toString()).thenReturn("Test_true")
         `when`(mockModel.insertNote(any())).thenReturn(-1)
-        mainPresenter.clickNewNote(mockEditText)
+        mainPresenter.switchCreateOrUpdate(mockEditText)
         verify(mockView).showToast(any())
 
         mainPresenter.clickOpenNote(0, 0)
@@ -74,7 +74,7 @@ class MainPresenterTest {
 
         val adapterPosition = 0
         val layoutPosition = 1
-        mainPresenter.removeNote(Note(), adapterPosition, layoutPosition)
+        mainPresenter.deleteNote(Note(), adapterPosition, layoutPosition)
         verify(mockView).showProgress()
         verify(mockModel).removeNote(any(),eq(adapterPosition))
         verify(mockView).hideProgress()
@@ -88,7 +88,7 @@ class MainPresenterTest {
 
         val adapterPosition = 0
         val layoutPosition = 1
-        mainPresenter.removeNote(Note(), adapterPosition, layoutPosition);
+        mainPresenter.deleteNote(Note(), adapterPosition, layoutPosition)
         verify(mockView).showProgress()
         verify(mockModel).removeNote(any(), eq(adapterPosition))
         verify(mockView).hideProgress()
