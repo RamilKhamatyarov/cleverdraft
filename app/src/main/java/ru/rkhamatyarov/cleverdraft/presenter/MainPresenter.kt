@@ -39,6 +39,10 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     // because the Activity could be destroyed at any time
     // and we don't want to create a memory leak*/
     var mainView: WeakReference<MainMVP.ViewOps>?
+    init {
+        mainView = WeakReference<MainMVP.ViewOps>(view)
+    }
+
     var mainModel: MainMVP.ProvidedModelOps? = null
         set(value){
             field = value
@@ -46,16 +50,14 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         }
     private var adapterPos = -1
     private var layoutPos = -1
-    private var isUpdate = false;
+    private var isUpdate = false
 
     private var alarm: Alarm? = null
     companion object {
         const val EXTRA_MESSAGE = "ru.rkhamatyarov.cleverdraft.presenter.MESSAGE"
     }
 
-    init {
-       mainView = WeakReference<MainMVP.ViewOps>(view)
-    }
+
 
 
 
@@ -165,64 +167,15 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
 //    @Throws(NullPointerException::class)
     private fun getView(): MainMVP.ViewOps = mainView?.get()!!
 
-    override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {
-        getView().showProgress()
+    override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {}
 
-        val openNoteTask: OpenNoteTask = OpenNoteTask(mainModel, mainView)
-        openNoteTask.adapterPos = adapterPosition
-        openNoteTask.layoutPos = layoutPosition
-        openNoteTask.isUpdate = isUpdate
-
-        openNoteTask.execute()
-    }
-
-    override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int) =
-            openDeleteAlert(note, adapterPosition, layoutPosition)
-
-    /**
-     * Create an AlertBox to confirm a delete action
-     * @param note          Note to be deleted
-     * @param adapterPos    Adapter position
-     * @param layoutPos     Recycler layout position
-     */
-    private fun openDeleteAlert(note: Note?, adapterPosition: Int, layoutPosition: Int ) {
-        var alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(getActivityContext())
-        alertDialogBuilder.setPositiveButton("DELETE", { dialog, width ->
-
-            deleteNote(checkNotNull(note), adapterPosition, layoutPosition)
-        })
-        alertDialogBuilder.setNegativeButton("CANCEL", {dialog, width -> dialog.dismiss()})
-        alertDialogBuilder.setTitle("Delete note")
-        alertDialogBuilder.setMessage("Delete " + note?.content + "?")
-
-        var alertDialog: AlertDialog = alertDialogBuilder.create()
-        getView().showAlert(alertDialog)
-    }
-
-    /**
-     * Create a asyncTask to delete the object in Model
-     * @param note          Note to delete
-     * @param adapterPos    Adapter position
-     * @param layoutPos     Recycler layout position
-     */
-    fun deleteNote(note: Note, adapterPosition: Int, layoutPosition: Int) {
-        getView().showProgress()
-
-        val deleteNoteTask: DeleteNoteTask = DeleteNoteTask(mainModel, mainView)
-        deleteNoteTask.adapterPos = adapterPosition
-        deleteNoteTask.layoutPos = layoutPosition
-        deleteNoteTask.note = note
-
-        deleteNoteTask.execute()
-    }
+    override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int) {}
 
     override fun onDestroy(isChangingConfiguration: Boolean) {
         mainView = null
         mainModel?.onDestroy(isChangingConfiguration)
 
         if (!isChangingConfiguration) mainModel = null
-
-
     }
 
 
@@ -239,12 +192,6 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
 //        println("setDateTimePicker newInstance")
 //        dateTimePicker.setTargetFragment()
 //        dateTimePicker.show(getSupportFragmentManager(), DATEPICKER_TAG);
-    }
-
-    override fun startListActivity() {
-        val intent = Intent(getActivityContext(), DraftListActivity::class.java)
-        getActivityContext().startActivity(intent)
-
     }
 
     override fun getApplicationContext(): Context = getView().getAppContext()

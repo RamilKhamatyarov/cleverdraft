@@ -56,7 +56,6 @@ interface  MainMVP {
         fun clickOpenNote(adapterPosition: Int, layoutPosition: Int)
 
         fun setDateTimePicker(fragmentManager: FragmentManager)
-        fun startListActivity()
     }
 
     interface ProvidedModelOps {

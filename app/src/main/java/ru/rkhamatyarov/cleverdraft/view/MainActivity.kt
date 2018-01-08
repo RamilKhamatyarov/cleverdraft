@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
             R.id.fab -> {
                 // Add new note
                 mainTextNewNote?.let { mainPresenter.switchCreateOrUpdate(it) }
+                startListActivity()
             }
         }
     }
@@ -192,11 +193,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
                 true
             }
             R.id.action_navigation -> {
-                mainPresenter.startListActivity()
+                startListActivity()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
         return b
+    }
+
+    private fun startListActivity(){
+        val intent = Intent(this, DraftListActivity::class.java)
+        this.startActivity(intent)
     }
 }
