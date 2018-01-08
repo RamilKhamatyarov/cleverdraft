@@ -127,14 +127,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
     }
 
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.fab -> {
-                // Add new note
-                mainTextNewNote?.let { draftListPresenter.switchCreateOrUpdate(it) }
-            }
-        }
-    }
+    override fun onClick(v: View) {}
 
     override fun showToast(toast: Toast) {
         toast.show()

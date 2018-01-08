@@ -15,8 +15,9 @@ import java.util.*
  * Created by Asus on 20.12.2017.
  */
 
-class NewNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?,
-                               val noteText: String) : AsyncTask<Void, Void, Int>() {
+class NewNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)
+    : AsyncTask<Void, Void, Int>() {
+    lateinit var noteText: String
 
     override fun doInBackground(vararg params: Void?): Int? = mainModel?.insertNote(makeNote(noteText))?.toInt()
 
@@ -48,11 +49,11 @@ class NewNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val main
 
 }
 
-class UpdateNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?,
-val noteText: String) : AsyncTask<Void, Void, Int>(){
+class UpdateNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)
+                                : AsyncTask<Void, Void, Int>(){
     var adapterPos = -1
     var layoutPos = -1
-    var isUpdate = false
+    var noteText: String? = null
 
     override fun doInBackground(vararg params: Void?): Int {
         // Insert note in Model, returning result
@@ -73,7 +74,6 @@ val noteText: String) : AsyncTask<Void, Void, Int>(){
 
             adapterPos = -1
             layoutPos = -1
-            isUpdate = false
 
         }else{
             // Inform about error
@@ -108,15 +108,10 @@ class OpenNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mai
     : AsyncTask<Void, Void, Boolean>(){
     var adapterPos = -1
     var layoutPos = -1
-    var isUpdate = false
     var note: Note? = null
 
     override fun doInBackground(vararg params: Void?): Boolean {
         note = checkNotNull(mainModel).getNote(adapterPos)
-
-//        adapterPos = adapterPosition
-//        layoutPos = layoutPosition
-        isUpdate = true
 
         return note != null
     }
@@ -127,6 +122,7 @@ class OpenNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mai
             val message: String? = note?.content
 
             intent.putExtra(MainPresenter.EXTRA_MESSAGE, message)
+            intent.putExtra(MainPresenter.EXTRA_MESSAGE_ID, adapterPos)
             getActivityContext().startActivity(intent)
 
 //                    note?.content?.let { getView().setEditText(it) }

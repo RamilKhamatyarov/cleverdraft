@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     private fun insertIntentText() {
-        val intent: Intent = getIntent()
+
         val message = intent.getStringExtra(MainPresenter.EXTRA_MESSAGE)
         mainTextNewNote?.setText(message)
     }
@@ -123,8 +123,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> {
-                // Add new note
-                mainTextNewNote?.let { mainPresenter.switchCreateOrUpdate(it) }
+
+                val messageId = intent.getIntExtra(MainPresenter.EXTRA_MESSAGE_ID, -1)
+
+                if (messageId == -1) {
+                    mainTextNewNote?.let { mainPresenter.newNote(it) }
+                } else {
+                    mainTextNewNote?.let { mainPresenter.updateNote(it, messageId) }
+                }
                 startListActivity()
             }
         }
@@ -205,4 +211,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         val intent = Intent(this, DraftListActivity::class.java)
         this.startActivity(intent)
     }
+
 }

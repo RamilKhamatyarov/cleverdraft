@@ -35,8 +35,6 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
             loadData()
         }
 
-    private var isUpdate = false
-
     override fun onDestroy(isChangingConfiguration: Boolean) {
         mainView = null
         mainModel?.onDestroy(isChangingConfiguration)
@@ -50,10 +48,10 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
 
     override fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
 
-        var inflater: LayoutInflater = LayoutInflater.from(parent.context)
+        val inflater: LayoutInflater = LayoutInflater.from(parent.context)
 
-        var viewTaskRow: View = inflater.inflate(R.layout.holder_notes, parent, false)
-        var viewHolder = NotesViewHolder(viewTaskRow)
+        val viewTaskRow: View = inflater.inflate(R.layout.holder_notes, parent, false)
+        val viewHolder = NotesViewHolder(viewTaskRow)
 
         return viewHolder
     }
@@ -75,11 +73,7 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun updateNote(editText: EditText) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun switchCreateOrUpdate(editText: EditText) {
+    override fun updateNote(editText: EditText, adapterPosition: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -92,8 +86,6 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         val openNoteTask: OpenNoteTask = OpenNoteTask(mainModel, mainView)
         openNoteTask.adapterPos = adapterPosition
         openNoteTask.layoutPos = layoutPosition
-        isUpdate = true
-        openNoteTask.isUpdate = isUpdate
 
         openNoteTask.execute()
     }

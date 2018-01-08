@@ -50,11 +50,13 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         }
     private var adapterPos = -1
     private var layoutPos = -1
-    private var isUpdate = false
 
     private var alarm: Alarm? = null
+
+    //TODO take out separate class
     companion object {
         const val EXTRA_MESSAGE = "ru.rkhamatyarov.cleverdraft.presenter.MESSAGE"
+        const val EXTRA_MESSAGE_ID = "ru.rkhamatyarov.cleverdraft.presenter.ID"
     }
 
 
@@ -92,24 +94,15 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
 
     override fun getNotesCount(): Int? = mainModel?.getNotesCount()
 
-    override fun switchCreateOrUpdate(editText: EditText) {
-        getView().showProgress()
-
-        if (isUpdate) {
-            updateNote(editText)
-
-        } else {
-            newNote(editText)
-        }
-    }
-
     override fun newNote(editText: EditText) {
         getView().showProgress()
 
         val noteText: String = editText.text.toString()
 
         if (!noteText.isEmpty()) {
-            NewNoteTask(mainModel, mainView, noteText).execute()
+            val newNoteTask: NewNoteTask = NewNoteTask(mainModel, mainView)
+            newNoteTask.noteText = noteText
+            newNoteTask.execute()
 
         } else {
             try{
@@ -120,17 +113,16 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         }
     }
 
-    override fun updateNote(editText: EditText) {
+    override fun updateNote(editText: EditText, position: Int) {
         getView().showProgress()
 
         val noteText: String = editText.text.toString()
 
         if (!noteText.isEmpty()) {
-            val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView, noteText)
-            updateNoteTask.adapterPos = adapterPos
+            val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView)
+            updateNoteTask.adapterPos = position
             updateNoteTask.layoutPos = layoutPos
-            updateNoteTask.isUpdate = isUpdate
-            TODO("make noteText as task setter field")
+            updateNoteTask.noteText = noteText
             updateNoteTask.execute()
         } else {
             try{

@@ -49,8 +49,7 @@ interface  MainMVP {
         fun bindViewHolder(holder: NotesViewHolder, position: Int)
         fun getNotesCount(): Int?
         fun newNote(editText: EditText)
-        fun updateNote (editText: EditText)
-        fun switchCreateOrUpdate(editText: EditText)
+        fun updateNote (editText: EditText, adapterPosition: Int)
 
         fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int)
         fun clickOpenNote(adapterPosition: Int, layoutPosition: Int)
