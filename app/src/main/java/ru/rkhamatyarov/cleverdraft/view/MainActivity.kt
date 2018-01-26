@@ -1,5 +1,6 @@
 package ru.rkhamatyarov.cleverdraft.view
 
+import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -202,6 +203,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
                 startListActivity()
                 true
             }
+            R.id.action_datetime -> {
+                setDateTime()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
         return b
@@ -210,6 +215,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private fun startListActivity(){
         val intent = Intent(this, DraftListActivity::class.java)
         this.startActivity(intent)
+    }
+
+    private fun setDateTime() {
+        mainPresenter.setDateTimePicker(fragmentManager)
+
     }
 
 }

@@ -9,6 +9,9 @@ import android.os.Bundle
 
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.DatePicker
 
 //import org.jetbrains.anko.bundleOf
@@ -42,13 +45,14 @@ class DatePickerFragment : DialogFragment() {
         }
 
         // Define how the previous activity should get result.
-        fun dateResult(data: Intent): Date {
-            return data.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
-        }
+        fun dateResult(data: Intent): Date =
+                data.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
     }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 //        val initialDate = arguments.getSerializable(ARG_DATE) as Date
+
 
         val bundle: Bundle = Bundle()
         val initialDate = Date(bundle.getLong(ARG_DATE))
@@ -65,17 +69,18 @@ class DatePickerFragment : DialogFragment() {
             init(year, month, day, null)
         }
 
-        return AlertDialog.Builder(activity)
-                .setTitle(R.string.date_picker_title)
-                .setView(datePicker)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok) {
-                    _, _ ->
-                    val date = GregorianCalendar(datePicker.year, datePicker.month, datePicker.dayOfMonth).time
-                    Log.d(TAG, date.toString())
-                    sendResult(Activity.RESULT_OK, date)
-                }
-                .create()
+        var dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(activity)
+        dialogBuilder.setView(R.layout.dialog_datetime)
+        dialogBuilder.setTitle("Pick datetime")
+        dialogBuilder.setNegativeButton(android.R.string.cancel, null)
+        dialogBuilder.setPositiveButton(android.R.string.ok) {
+            _, _ ->
+            val date = GregorianCalendar(datePicker.year, datePicker.month, datePicker.dayOfMonth).time
+            Log.d(TAG, date.toString())
+            sendResult(Activity.RESULT_OK, date)
+        }
+
+        return dialogBuilder.create()
     }
 
     /**

@@ -127,7 +127,14 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
     }
 
 
-    override fun onClick(v: View) {}
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.fab -> {
+                TODO("not work - fix")
+                startMainActivity()
+            }
+        }
+    }
 
     override fun showToast(toast: Toast) {
         toast.show()
@@ -226,5 +233,9 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
         return b
     }
 
+    private fun startMainActivity(){
+        val intent = Intent(this, MainActivity::class.java)
+        this.startActivity(intent)
+    }
 
 }

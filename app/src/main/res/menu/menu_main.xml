@@ -4,6 +4,13 @@
     tools:context="ru.rkhamatyarov.cleverdraft.view.MainActivity">
 
     <item
+        android:id="@+id/action_datetime"
+        android:icon="@drawable/ic_alarm_black_48dp"
+        android:title="@string/action_navigation"
+        android:menuCategory="system"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/action_navigation"
         android:icon="@drawable/ic_menu_black_48dp"
         android:title="@string/action_navigation"
