@@ -4,7 +4,7 @@ import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.data.NoteDAO
 
 /**
- * Created by Asus on 03.09.2017.
+ * Created by RKhamatyarov on 03.09.2017.
  */
 open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.ProvidedModelOps{
 

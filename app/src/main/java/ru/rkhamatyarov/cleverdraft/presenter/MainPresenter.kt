@@ -1,12 +1,10 @@
 package ru.rkhamatyarov.cleverdraft.presenter
 
 
-import android.app.AlertDialog
 import android.app.DialogFragment
 
 import android.app.FragmentManager
 import android.content.Context
-import android.os.AsyncTask
 
 import android.view.LayoutInflater
 import android.view.View
@@ -16,23 +14,19 @@ import android.widget.Toast
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.model.Note
-import ru.rkhamatyarov.cleverdraft.view.utilities.DatePickerFragment
+import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.Intent
 import ru.rkhamatyarov.cleverdraft.presenter.async.*
-import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
-import ru.rkhamatyarov.cleverdraft.view.MainActivity
-
-
+import javax.inject.Inject
 
 
 /**
- * Created by Asus on 03.09.2017.
+ * Created by RKhamatyarov on 03.09.2017.
  */
-class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
+class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePickerPresenter): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
 
 
     /*View reference. We use as a WeakReference
@@ -52,6 +46,9 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
     private var layoutPos = -1
 
     private var alarm: Alarm? = null
+
+
+
 
     //TODO take out separate class
     companion object {
@@ -168,22 +165,6 @@ class MainPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.Provid
         mainModel?.onDestroy(isChangingConfiguration)
 
         if (!isChangingConfiguration) mainModel = null
-    }
-
-
-    override fun setDateTimePicker(fragmentManager: FragmentManager) {
-        val calendar: Calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val min = calendar.get(Calendar.MINUTE)
-
-        val dateTimePicker: DialogFragment = DatePickerFragment.newInstance(Calendar.getInstance().getTime())
-        dateTimePicker.show(fragmentManager, "dateTimePicker")
-//        println("setDateTimePicker newInstance")
-//        dateTimePicker.setTargetFragment()
-//        dateTimePicker.show(getSupportFragmentManager(), DATEPICKER_TAG);
     }
 
     override fun getApplicationContext(): Context = getView().getAppContext()

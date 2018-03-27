@@ -1,7 +1,7 @@
 package ru.rkhamatyarov.cleverdraft.utilities
 
 /**
- * Created by Asus on 24.08.2017.
+ * Created by RKhamatyarov on 24.08.2017.
  */
 class NoteConstants {
     companion object {

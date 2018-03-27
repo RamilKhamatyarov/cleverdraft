@@ -10,10 +10,10 @@ import ru.rkhamatyarov.cleverdraft.utililities.di.ActivityScope
 import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
 
 /**
- * Created by Asus on 21.11.2017.
+ * Created by RKhamatyarov on 21.11.2017.
  */
 @Module
-class DraftListActivityModule(var draftListActivity: DraftListActivity) {
+    class DraftListActivityModule(var draftListActivity: DraftListActivity) {
 
     @Provides
     @ActivityScope

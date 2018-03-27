@@ -12,7 +12,7 @@ import java.util.*
 
 
 /**
- * Created by Asus on 28.08.2017.
+ * Created by RKhamatyarov on 28.08.2017.
  */
 
 class NoteDAO(ctx: Context?) {

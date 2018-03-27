@@ -4,6 +4,7 @@ import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -22,10 +23,12 @@ import javax.inject.Inject
 
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
 import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
 import ru.rkhamatyarov.cleverdraft.utililities.di.*
+import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
@@ -38,6 +41,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     @Inject
     lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+
+    @Inject
+    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -69,7 +75,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         fab.setOnClickListener(this)
 
         mainTextNewNote = findViewById(R.id.edit_note) as EditText
-//        mainListAdapter = ListNotes()
 
         insertIntentText()
 
@@ -218,7 +223,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     private fun setDateTime() {
-        mainPresenter.setDateTimePicker(fragmentManager)
+        val dateTimePickerFragment = DateTimePickerFragment()
+        ChiefApp.get(this).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(dateTimePickerFragment)).inject(dateTimePickerFragment)
+        dateTimePickerPresenter.setDateTimeToPicker(fragmentManager)
 
     }
 

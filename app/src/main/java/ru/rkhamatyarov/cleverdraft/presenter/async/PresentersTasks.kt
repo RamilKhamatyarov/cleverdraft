@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 /**
- * Created by Asus on 20.12.2017.
+ * Created by RKhamatyarov on 20.12.2017.
  */
 
 class NewNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)

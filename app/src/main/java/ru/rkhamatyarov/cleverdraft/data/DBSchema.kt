@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import ru.rkhamatyarov.cleverdraft.utilities.NoteConstants
 
 /**
- * Created by Asus on 09.10.2017.
+ * Created by RKhamatyarov on 09.10.2017.
  */
 class DBSchema: SQLiteOpenHelper{
 

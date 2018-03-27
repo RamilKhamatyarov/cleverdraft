@@ -15,7 +15,7 @@ import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.model.Note
 
 /**
- * Created by Asus on 03.09.2017.
+ * Created by RKhamatyarov on 03.09.2017.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class, sdk = intArrayOf(21))

@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 
 /**
- * Created by Asus on 17.11.2017.
+ * Created by RKhamatyarov on 17.11.2017.
  */
 class DateTimeReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
+        /*val service = Intent(context, your_service::class.java)
+        context.startService(service)*/
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

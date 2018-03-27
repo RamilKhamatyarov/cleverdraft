@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by Asus on 08.01.2018.
+ * Created by RKhamatyarov on 08.01.2018.
  */
 
 class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
@@ -88,10 +88,6 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         openNoteTask.layoutPos = layoutPosition
 
         openNoteTask.execute()
-    }
-
-    override fun setDateTimePicker(fragmentManager: FragmentManager) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /**

@@ -31,7 +31,7 @@ import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import javax.inject.Inject
 
 /**
- * Created by Asus on 23.07.2017.
+ * Created by RKhamatyarov on 23.07.2017.
  */
 
 class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps  {
@@ -223,9 +223,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
                 true
             }
             R.id.action_reminder -> {
-                draftListPresenter.setDateTimePicker(fragmentManager)
-//                val dateTimePicker: DialogFragment = DatePickerFragment()
-//                dateTimePicker.show(fragmentManager, "timePicker")
+                //TODO make datetimepicker as in mainActivity
                 true
             }
             else -> super.onOptionsItemSelected(item)

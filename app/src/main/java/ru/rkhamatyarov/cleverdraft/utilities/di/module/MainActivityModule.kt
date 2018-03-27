@@ -1,14 +1,17 @@
 package ru.rkhamatyarov.cleverdraft.utililities.di
 
+import android.app.FragmentManager
 import dagger.Module
 import dagger.Provides
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.model.MainModel
+import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
+import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
 /**
- * Created by Asus on 19.09.2017.
+ * Created by RKhamatyarov on 19.09.2017.
  */
 
 
@@ -21,11 +24,19 @@ class MainActivityModule (var mainActivity: MainActivity) {
 
     @Provides
     @ActivityScope
-    fun providedPresenterOps(): MainMVP.ProvidedPresenterOps {
-        val mainPresenter: MainPresenter = MainPresenter(this.mainActivity)
+    fun providedPresenterOps(dateTimePickerPresenter: DateTimePickerPresenter): MainMVP.ProvidedPresenterOps {
+        val mainPresenter: MainPresenter = MainPresenter(this.mainActivity, dateTimePickerPresenter)
         val model: MainModel = MainModel(mainPresenter)
         mainPresenter.mainModel = model
         return mainPresenter
     }
+
+    @Provides
+    @ActivityScope
+    fun providesDateTimePickerPresenter(): DateTimePickerPresenter{
+
+        return DateTimePickerPresenter(DateTimePickerFragment())
+    }
+
 
 }

@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config
 
 
 /**
- * Created by Asus on 28.08.2017.
+ * Created by RKhamatyarov on 28.08.2017.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class, sdk = intArrayOf(21))
