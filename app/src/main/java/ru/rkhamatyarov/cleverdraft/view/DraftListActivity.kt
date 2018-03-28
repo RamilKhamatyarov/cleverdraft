@@ -3,6 +3,7 @@ package ru.rkhamatyarov.cleverdraft.view
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
@@ -30,7 +31,7 @@ import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import javax.inject.Inject
 
 /**
- * Created by Asus on 23.07.2017.
+ * Created by RKhamatyarov on 23.07.2017.
  */
 
 class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps  {
@@ -42,10 +43,8 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
     override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
-
-
     @Inject
-    lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+    lateinit var draftListPresenter: MainMVP.ProvidedPresenterOps
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -64,7 +63,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
     override fun onDestroy() {
         super.onDestroy()
-        mainPresenter.onDestroy(isChangingConfigurations)
+        draftListPresenter.onDestroy(isChangingConfigurations)
     }
 
     /**
@@ -118,8 +117,8 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
 
     private fun reinitialize() {
-        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as MainMVP.ProvidedPresenterOps
-        mainPresenter.setView(this)
+        draftListPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as MainMVP.ProvidedPresenterOps
+        draftListPresenter.setView(this)
     }
 
 
@@ -131,8 +130,8 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> {
-                // Add new note
-                mainTextNewNote?.let { mainPresenter.switchCreateOrUpdate(it) }
+                TODO("not work - fix")
+                startMainActivity()
             }
         }
     }
@@ -187,7 +186,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
 
         override fun getItemCount(): Int {
-            val count = mainPresenter.getNotesCount()
+            val count = draftListPresenter.getNotesCount()
             if (count != null) {
                 return count
             }
@@ -195,18 +194,18 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
-            return mainPresenter.createViewHolder(parent, viewType)
+            return draftListPresenter.createViewHolder(parent, viewType)
         }
 
         override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
-            mainPresenter.bindViewHolder(holder, position)
+            draftListPresenter.bindViewHolder(holder, position)
         }
 
     }
 
     companion object {
 
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = DraftListActivity::class.java.simpleName
     }
 
     override fun getAppContext(): Context = applicationContext
@@ -224,9 +223,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
                 true
             }
             R.id.action_reminder -> {
-                mainPresenter.setDateTimePicker(fragmentManager)
-//                val dateTimePicker: DialogFragment = DatePickerFragment()
-//                dateTimePicker.show(fragmentManager, "timePicker")
+                //TODO make datetimepicker as in mainActivity
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -234,5 +231,9 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
         return b
     }
 
+    private fun startMainActivity(){
+        val intent = Intent(this, MainActivity::class.java)
+        this.startActivity(intent)
+    }
 
 }

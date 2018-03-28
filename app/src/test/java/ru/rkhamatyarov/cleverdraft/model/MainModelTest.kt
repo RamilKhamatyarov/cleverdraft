@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * Created by Asus on 11.09.2017.
+ * Created by RKhamatyarov on 11.09.2017.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class, sdk = intArrayOf(21))

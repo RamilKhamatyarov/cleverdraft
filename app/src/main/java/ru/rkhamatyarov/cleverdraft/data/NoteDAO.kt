@@ -12,7 +12,7 @@ import java.util.*
 
 
 /**
- * Created by Asus on 28.08.2017.
+ * Created by RKhamatyarov on 28.08.2017.
  */
 
 class NoteDAO(ctx: Context?) {
@@ -29,8 +29,6 @@ class NoteDAO(ctx: Context?) {
     fun getAllNotes(): ArrayList<Note> {
         val db: SQLiteDatabase = getReadableDb()
 
-//        val cursor: Cursor = db.query(NoteConstants.NOTES_TABLE_NAME, null, null, null, null, null,
-//                NoteConstants.SORT_ORDER_DEFAULT)
         val cursor: Cursor = db.rawQuery(NoteConstants.SELECT_ALL_RECORDS + NoteConstants.NOTES_TABLE_NAME, null)
         cursor.moveToFirst()
         Log.d("DAO", cursor.toString())

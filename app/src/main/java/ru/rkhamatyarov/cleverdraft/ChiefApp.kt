@@ -8,12 +8,8 @@ import ru.rkhamatyarov.cleverdraft.utililities.di.DaggerAppComponent
 
 
 /**
- * Created by Asus on 16.09.2017.
+ * Created by RKhamatyarov on 16.09.2017.
  */
-//fun get(context: Context): ChiefApp {
-//    return context.getApplicationContext() as ChiefApp
-//}
-
 
 class ChiefApp: Application() {
 

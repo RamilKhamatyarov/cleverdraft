@@ -5,7 +5,7 @@ import ru.rkhamatyarov.cleverdraft.utilities.NoteConstants
 import java.util.Date
 
 /**
- * Created by Asus on 02.09.2017.
+ * Created by RKhamatyarov on 02.09.2017.
  */
 
 class Note {

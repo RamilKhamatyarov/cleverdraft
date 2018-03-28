@@ -13,7 +13,7 @@ import ru.rkhamatyarov.cleverdraft.R
 
 
 /**
- * Created by Asus on 03.09.2017.
+ * Created by RKhamatyarov on 03.09.2017.
  */
  class NotesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
       lateinit var container: RelativeLayout

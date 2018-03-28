@@ -4,10 +4,12 @@ import android.app.Application
 import dagger.Component
 import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityComponent
 import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
+import ru.rkhamatyarov.cleverdraft.utilities.di.component.DateTimePickerFragmentComponent
+import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 import javax.inject.Singleton
 
 /**
- * Created by Asus on 14.09.2017.
+ * Created by RKhamatyarov on 14.09.2017.
  */
 
 
@@ -17,5 +19,5 @@ interface AppComponent {
     fun application(): Application
     fun getMainComponent(mainActivityModule: MainActivityModule): MainActivityComponent
     fun getDraftListComponent(draftListActivityModule: DraftListActivityModule): DraftListActivityComponent
-
+    fun getDateTimePickerComponent(dateTimePickerFragmentModule: DateTimePickerFragmentModule): DateTimePickerFragmentComponent
 }

@@ -1,8 +1,10 @@
 package ru.rkhamatyarov.cleverdraft.view
 
+import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -21,10 +23,12 @@ import javax.inject.Inject
 
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
 import ru.rkhamatyarov.cleverdraft.R
+import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
 import ru.rkhamatyarov.cleverdraft.utililities.di.*
+import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
@@ -37,6 +41,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     @Inject
     lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
+
+    @Inject
+    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -68,7 +75,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
         fab.setOnClickListener(this)
 
         mainTextNewNote = findViewById(R.id.edit_note) as EditText
-//        mainListAdapter = ListNotes()
 
         insertIntentText()
 
@@ -84,7 +90,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     }
 
     private fun insertIntentText() {
-        val intent: Intent = getIntent()
+
         val message = intent.getStringExtra(MainPresenter.EXTRA_MESSAGE)
         mainTextNewNote?.setText(message)
     }
@@ -123,8 +129,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fab -> {
-                // Add new note
-                mainTextNewNote?.let { mainPresenter.switchCreateOrUpdate(it) }
+
+                val messageId = intent.getIntExtra(MainPresenter.EXTRA_MESSAGE_ID, -1)
+
+                if (messageId == -1) {
+                    mainTextNewNote?.let { mainPresenter.newNote(it) }
+                } else {
+                    mainTextNewNote?.let { mainPresenter.updateNote(it, messageId) }
+                }
+                startListActivity()
             }
         }
     }
@@ -192,11 +205,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
                 true
             }
             R.id.action_navigation -> {
-                mainPresenter.startListActivity()
+                startListActivity()
+                true
+            }
+            R.id.action_datetime -> {
+                setDateTime()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
         return b
     }
+
+    private fun startListActivity(){
+        val intent = Intent(this, DraftListActivity::class.java)
+        this.startActivity(intent)
+    }
+
+    private fun setDateTime() {
+        val dateTimePickerFragment = DateTimePickerFragment()
+        ChiefApp.get(this).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(dateTimePickerFragment)).inject(dateTimePickerFragment)
+        dateTimePickerPresenter.setDateTimeToPicker(fragmentManager)
+
+    }
+
 }

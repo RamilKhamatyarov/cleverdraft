@@ -1,10 +1,12 @@
 package ru.rkhamatyarov.cleverdraft.utililities.di
 
 import dagger.Subcomponent
+import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
+import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
 /**
- * Created by Asus on 14.09.2017.
+ * Created by RKhamatyarov on 14.09.2017.
  */
 
 
