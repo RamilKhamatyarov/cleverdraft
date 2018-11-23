@@ -2,12 +2,13 @@ package ru.rkhamatyarov.cleverdraft.view
 
 
 import android.annotation.TargetApi
-import android.app.*
+import android.app.Activity
+import android.app.Dialog
+import android.app.DialogFragment
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,8 +18,6 @@ import android.widget.TimePicker
 import ru.rkhamatyarov.cleverdraft.ChiefApp
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
-import ru.rkhamatyarov.cleverdraft.presenter.DraftListPresenter
-import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
 import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 import java.util.*
 import javax.inject.Inject
@@ -47,8 +46,8 @@ class DateTimePickerFragment : DialogFragment(){
         // Define how a hosting activity should create this fragment.
         fun newInstance(date: Date): DateTimePickerFragment {
             return DateTimePickerFragment().apply {
-                //                arguments = bundleOf(ARG_DATE to date)
-//                arguments.putLong(ARG_DATE, date.time)
+                // arguments = bundleOf(ARG_DATE to date)
+                // arguments.putLong(ARG_DATE, date.time)
                 val bundle: Bundle = Bundle()
                 bundle.getLong(ARG_DATE, date.time)
             }
@@ -102,6 +101,7 @@ class DateTimePickerFragment : DialogFragment(){
      */
     private fun sendResult(resultCode: Int, date: Date) {
         Log.d(TAG, "sendResult")
+
         if (targetFragment == null) {
             Log.d(TAG, "sendResult: targetFragment: null")
             return

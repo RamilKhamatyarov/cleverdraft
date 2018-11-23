@@ -1,6 +1,5 @@
 package ru.rkhamatyarov.cleverdraft.utililities.di
 
-import android.app.FragmentManager
 import dagger.Module
 import dagger.Provides
 import ru.rkhamatyarov.cleverdraft.MainMVP
@@ -34,7 +33,6 @@ class MainActivityModule (var mainActivity: MainActivity) {
     @Provides
     @ActivityScope
     fun providesDateTimePickerPresenter(): DateTimePickerPresenter{
-
         return DateTimePickerPresenter(DateTimePickerFragment())
     }
 

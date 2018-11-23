@@ -1,7 +1,5 @@
 package ru.rkhamatyarov.cleverdraft.view
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,7 +14,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -24,7 +21,6 @@ import ru.rkhamatyarov.cleverdraft.ChiefApp
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
 import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
@@ -71,11 +67,11 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
      */
     private fun setupViews() {
 
-        val fab = findViewById(R.id.list_fab)
+        val fab:FloatingActionButton = findViewById(R.id.list_fab) as FloatingActionButton
         fab.setOnClickListener(this)
 
         mainListAdapter = ListNotes()
-        mProgress = findViewById(R.id.list_progressbar) as ProgressBar?
+        mProgress = findViewById(R.id.list_progressbar) as ProgressBar
 
         val mList = findViewById(R.id.list_notes) as RecyclerView
         val linearLayoutManager = LinearLayoutManager(this)
@@ -85,7 +81,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
         mList.adapter = mainListAdapter
         mList.itemAnimator = DefaultItemAnimator()
 
-        toolbar = findViewById(R.id.list_toolbar) as? Toolbar // Attaching the layout to the toolbar object
+        toolbar = findViewById(R.id.list_toolbar) as Toolbar // Attaching the layout to the toolbar object
         if (toolbar != null) {
             setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
 

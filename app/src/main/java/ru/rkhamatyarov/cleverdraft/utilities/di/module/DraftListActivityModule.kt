@@ -5,7 +5,6 @@ import dagger.Provides
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.model.MainModel
 import ru.rkhamatyarov.cleverdraft.presenter.DraftListPresenter
-import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
 import ru.rkhamatyarov.cleverdraft.utililities.di.ActivityScope
 import ru.rkhamatyarov.cleverdraft.view.DraftListActivity
 

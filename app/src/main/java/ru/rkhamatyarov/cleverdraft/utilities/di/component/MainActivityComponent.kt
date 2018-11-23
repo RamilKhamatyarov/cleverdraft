@@ -1,8 +1,6 @@
 package ru.rkhamatyarov.cleverdraft.utililities.di
 
 import dagger.Subcomponent
-import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
-import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.MainActivity
 
 /**

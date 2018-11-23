@@ -7,36 +7,35 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import android.widget.Toast
 import ru.rkhamatyarov.cleverdraft.R
-import ru.rkhamatyarov.cleverdraft.view.MainActivity
-import java.text.Format
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * Created by RKhamatyarov on 03.11.2017.
  */
-class Alarm: BroadcastReceiver() {
+class DraftBroadcastReceiver: BroadcastReceiver() {
     private val TAG = javaClass.simpleName
     private val ONE_TIME: String = "ONETIME"
+    private val ADAPTER_POSITION: String = "ADAPTER_POSITION"
+    private val LAYOUT_POSITION: String = "LAYOUT_POSITION"
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d(TAG, "Alarm: $context")
+        Log.d(TAG, "Context of receiving broadcast message from system by alarm manager: $context")
 
+
+        //TODO: extracting note positions from intent and open note by draft list presenter maybe datetime picker presenter
         val notificationManager: NotificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        val intent: Intent = Intent(context, MainActivity::class.java)
+        //See working of this mechanism
+        val intent = Intent(context, MainPresenter::class.java)
         val contentIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(context)
         val notification: Notification = builder.setContentIntent(contentIntent).
                 setSmallIcon(R.drawable.ic_alarm_white_48dp).
                 setTicker("DateTime appname").setAutoCancel(true).
-                setContentTitle("Content name").build()
+                setContentTitle("Content name in receiving broadcast message from system by alarm manager").build()
 
         notificationManager.notify(0, notification)
 
@@ -44,22 +43,29 @@ class Alarm: BroadcastReceiver() {
         cancelAlarm(context)
     }
 
-    fun setAlarm(context: Context, date: Date) {
+    fun setAlarm(context: Context,
+                 date: Date,
+                 noteAdapterPosition: Int,
+                 noteLayoutPosition: Int) {
+
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, Alarm::class.java)
+        val intent = Intent(context, DraftBroadcastReceiver::class.java)
         intent.putExtra(ONE_TIME, false)
+        intent.putExtra(ADAPTER_POSITION, noteAdapterPosition)
+        intent.putExtra(LAYOUT_POSITION, noteLayoutPosition)
+
         val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
 
-        Log.d(TAG, "DateTime: ${date.time}")
-        Log.d(TAG, "Context: $context")
-        Log.d(TAG, "alarmManager: $alarmManager")
+        Log.d(TAG, "DateTime when setting alarm by datetime picker presenter: ${date.time}")
+        Log.d(TAG, "Context when setting alarm by datetime picker presenter: $context")
+        Log.d(TAG, "AlarmManager when setting alarm by datetime picker presenter: $alarmManager")
 
         //Repeating 30 seconds
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, date.time, 1000*5, pendingIntent)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, date.time, 1000 * 5, pendingIntent)
     }
 
     fun cancelAlarm(context: Context) {
-        val intent: Intent = Intent(context, Alarm::class.java)
+        val intent: Intent = Intent(context, DraftBroadcastReceiver::class.java)
         val sender: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(sender)
@@ -67,7 +73,7 @@ class Alarm: BroadcastReceiver() {
 
     fun setOneTimer(context:Context) {
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent: Intent = Intent(context, Alarm::class.java)
+        val intent: Intent = Intent(context, DraftBroadcastReceiver::class.java)
         intent.putExtra(ONE_TIME, false)
         val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)

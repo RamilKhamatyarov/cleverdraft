@@ -1,21 +1,18 @@
 package ru.rkhamatyarov.cleverdraft
 
 import android.content.Context
-import android.util.Log
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import ru.rkhamatyarov.cleverdraft.data.NoteDAO
-
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
+import ru.rkhamatyarov.cleverdraft.data.NoteDAO
 import ru.rkhamatyarov.cleverdraft.model.Note
 import java.util.*
 import kotlin.properties.Delegates
-import org.junit.After
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
 
 /**

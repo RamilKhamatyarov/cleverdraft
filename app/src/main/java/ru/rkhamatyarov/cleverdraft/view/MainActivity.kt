@@ -1,15 +1,13 @@
 package ru.rkhamatyarov.cleverdraft.view
 
-import android.app.FragmentManager
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-
-
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,31 +17,21 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import ru.rkhamatyarov.cleverdraft.ChiefApp
 import ru.rkhamatyarov.cleverdraft.MainMVP
-import javax.inject.Inject
-
 import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
 import ru.rkhamatyarov.cleverdraft.R
-import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-
+import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
-import ru.rkhamatyarov.cleverdraft.utililities.di.*
-import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
-//    private var mainListAdapter: ListNotes? = null
     private var mProgress: ProgressBar? = null
     private var toolbar: Toolbar? = null
     override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
-
-
     @Inject
     lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
-
-    @Inject
-    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -71,17 +59,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private fun setupViews() {
 
 
-        val fab = findViewById(R.id.fab)
+        val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener(this)
 
         mainTextNewNote = findViewById(R.id.edit_note) as EditText
 
         insertIntentText()
 
-        mProgress = findViewById(R.id.progressbar) as ProgressBar?
+        mProgress = findViewById(R.id.progressbar) as ProgressBar
 
 
-        toolbar = findViewById(R.id.main_toolbar) as? Toolbar // Attaching the layout to the toolbar object
+        toolbar = findViewById(R.id.main_toolbar) as Toolbar // Attaching the layout to the toolbar object
         if (toolbar != null) {
             setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
         }
@@ -209,7 +197,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
                 true
             }
             R.id.action_datetime -> {
-                setDateTime()
+                mainPresenter.setDateTimeFromPicker(fragmentManager)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -220,13 +208,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private fun startListActivity(){
         val intent = Intent(this, DraftListActivity::class.java)
         this.startActivity(intent)
-    }
-
-    private fun setDateTime() {
-        val dateTimePickerFragment = DateTimePickerFragment()
-        ChiefApp.get(this).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(dateTimePickerFragment)).inject(dateTimePickerFragment)
-        dateTimePickerPresenter.setDateTimeToPicker(fragmentManager)
-
     }
 
 }

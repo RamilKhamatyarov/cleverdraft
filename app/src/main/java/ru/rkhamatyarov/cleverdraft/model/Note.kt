@@ -2,7 +2,7 @@ package ru.rkhamatyarov.cleverdraft.model
 
 import android.content.ContentValues
 import ru.rkhamatyarov.cleverdraft.utilities.NoteConstants
-import java.util.Date
+import java.util.*
 
 /**
  * Created by RKhamatyarov on 02.09.2017.

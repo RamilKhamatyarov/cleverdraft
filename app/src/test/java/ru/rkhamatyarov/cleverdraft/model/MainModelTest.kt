@@ -6,15 +6,14 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import ru.rkhamatyarov.cleverdraft.BuildConfig
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.data.NoteDAO
+import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.view.MainActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -28,6 +27,7 @@ class MainModelTest {
     private lateinit var noteDAO: NoteDAO
     private lateinit var mockView: MainMVP.ViewOps
     private lateinit var mockPresenter: MainPresenter
+    private lateinit var mockDateTimePickerPresenter: DateTimePickerPresenter
 
     @Before
     fun setup(){
@@ -35,8 +35,9 @@ class MainModelTest {
         val context: Context = RuntimeEnvironment.application
         noteDAO = NoteDAO(context)
 
-        mockView = Mockito.mock( MainMVP.ViewOps::class.java )
-        mockPresenter = MainPresenter(mockView)
+        mockView = Mockito.mock( MainMVP.ViewOps::class.java)
+        mockDateTimePickerPresenter = Mockito.mock(DateTimePickerPresenter::class.java)
+        mockPresenter = MainPresenter(mockView, mockDateTimePickerPresenter)
 
         mainModel = MainModel(mockPresenter, noteDAO)
         mainModel.notes = ArrayList()

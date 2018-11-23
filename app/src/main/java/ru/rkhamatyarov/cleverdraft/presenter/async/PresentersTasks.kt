@@ -51,18 +51,18 @@ class NewNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val main
 
 class UpdateNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)
                                 : AsyncTask<Void, Void, Int>(){
-    var adapterPos = -1
-    var layoutPos = -1
+    var adapterPosition = -1
+    var layoutPosition = -1
     var noteText: String? = null
 
     override fun doInBackground(vararg params: Void?): Int {
         // Insert note in Model, returning result
-        val note = mainModel?.getNote(adapterPos)
+        val note = mainModel?.getNote(adapterPosition)
 
         note?.content = noteText
-        note?.let { mainModel?.updateNote(it, adapterPos) }
+        note?.let { mainModel?.updateNote(it, adapterPosition) }
 
-        return adapterPos
+        return adapterPosition
     }
 
     override fun onPostExecute(adapterPosition: Int)= try {
@@ -72,8 +72,8 @@ class UpdateNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val m
             getView().notifyDataSetChanged()
             getView().clearEditText()
 
-            adapterPos = -1
-            layoutPos = -1
+            this.adapterPosition = -1
+            this.layoutPosition = -1
 
         }else{
             // Inform about error
@@ -106,12 +106,12 @@ class LoadDataTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mai
 
 class OpenNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)
     : AsyncTask<Void, Void, Boolean>(){
-    var adapterPos = -1
-    var layoutPos = -1
+    var adapterPosition = -1
+    var layoutPosition = -1
     var note: Note? = null
 
     override fun doInBackground(vararg params: Void?): Boolean {
-        note = checkNotNull(mainModel).getNote(adapterPos)
+        note = checkNotNull(mainModel).getNote(adapterPosition)
 
         return note != null
     }
@@ -122,10 +122,8 @@ class OpenNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mai
             val message: String? = note?.content
 
             intent.putExtra(MainPresenter.EXTRA_MESSAGE, message)
-            intent.putExtra(MainPresenter.EXTRA_MESSAGE_ID, adapterPos)
+            intent.putExtra(MainPresenter.EXTRA_MESSAGE_ID, adapterPosition)
             getActivityContext().startActivity(intent)
-
-//                    note?.content?.let { getView().setEditText(it) }
         }
     }
 
@@ -136,17 +134,17 @@ class OpenNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mai
 class DeleteNoteTask constructor(val mainModel: MainMVP.ProvidedModelOps?, val mainView: WeakReference<MainMVP.ViewOps>?)
     : AsyncTask<Void, Void, Boolean>(){
 
-    var adapterPos = -1
-    var layoutPos = -1
+    var adapterPosition = -1
+    var layoutPosition = -1
     var note: Note? = null
 
-    override fun doInBackground(vararg params: Void?): Boolean? = note?.let { mainModel?.removeNote(it, adapterPos) }
+    override fun doInBackground(vararg params: Void?): Boolean? = note?.let { mainModel?.removeNote(it, adapterPosition) }
 
     override fun onPostExecute(result: Boolean?) {
         getView().hideProgress()
         if (result != null && result) {
             // Remove item from RecyclerView
-            getView().notifyItemRemoved(layoutPos)
+            getView().notifyItemRemoved(layoutPosition)
             getView().showToast(makeToast(getView(),"Note deleted."))
         } else {
             // Inform about error

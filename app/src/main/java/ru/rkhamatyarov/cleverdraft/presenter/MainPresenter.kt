@@ -1,25 +1,26 @@
 package ru.rkhamatyarov.cleverdraft.presenter
 
 
-import android.app.DialogFragment
-
 import android.app.FragmentManager
 import android.content.Context
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import ru.rkhamatyarov.cleverdraft.ChiefApp
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.model.Note
+import ru.rkhamatyarov.cleverdraft.presenter.async.LoadDataTask
+import ru.rkhamatyarov.cleverdraft.presenter.async.NewNoteTask
+import ru.rkhamatyarov.cleverdraft.presenter.async.UpdateNoteTask
+import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
-import ru.rkhamatyarov.cleverdraft.presenter.async.*
 import javax.inject.Inject
 
 
@@ -28,10 +29,15 @@ import javax.inject.Inject
  */
 class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePickerPresenter): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
 
+    /**
+     * View reference. We use as a WeakReference
+     * because the Activity could be destroyed at any time
+     * and we don't want to create a memory leak
+     */
 
-    /*View reference. We use as a WeakReference
-    // because the Activity could be destroyed at any time
-    // and we don't want to create a memory leak*/
+    @Inject
+    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
+
     var mainView: WeakReference<MainMVP.ViewOps>?
     init {
         mainView = WeakReference<MainMVP.ViewOps>(view)
@@ -42,23 +48,14 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
             field = value
             loadData()
         }
-    private var adapterPos = -1
-    private var layoutPos = -1
-
-    private var alarm: Alarm? = null
-
-
-
+    private var adapterPosition = -1
+    private var layoutPosition = -1
 
     //TODO take out separate class
     companion object {
         const val EXTRA_MESSAGE = "ru.rkhamatyarov.cleverdraft.presenter.MESSAGE"
         const val EXTRA_MESSAGE_ID = "ru.rkhamatyarov.cleverdraft.presenter.ID"
     }
-
-
-
-
 
     override fun setView(view: MainMVP.ViewOps) {
         this.mainView = WeakReference<MainMVP.ViewOps>(view)
@@ -83,9 +80,6 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
         holder.butonDelete.setOnClickListener({ v -> clickDeleteNote(note, holder.adapterPosition, holder.layoutPosition)})
 
         holder.container.setOnClickListener({v -> clickOpenNote(holder.adapterPosition, holder.layoutPosition)})
-
-//        holder.container.setOnClickListener(({v -> setDateTimePicker(holder)}))
-
 
     }
 
@@ -117,8 +111,8 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
 
         if (!noteText.isEmpty()) {
             val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView)
-            updateNoteTask.adapterPos = position
-            updateNoteTask.layoutPos = layoutPos
+            updateNoteTask.adapterPosition = position
+            updateNoteTask.layoutPosition = layoutPosition
             updateNoteTask.noteText = noteText
             updateNoteTask.execute()
         } else {
@@ -153,14 +147,21 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
         return Calendar.getInstance().getTime()
     }
 
-//    @Throws(NullPointerException::class)
     private fun getView(): MainMVP.ViewOps = mainView?.get()!!
 
     override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {}
 
     override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int) {}
 
-    override fun onDestroy(isChangingConfiguration: Boolean) {
+    override fun setDateTimeFromPicker(fragmentManager: FragmentManager) {
+        val dateTimePickerFragment = DateTimePickerFragment()
+        ChiefApp.get(getActivityContext()).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(dateTimePickerFragment)).inject(dateTimePickerFragment)
+        dateTimePickerPresenter.setDateTimeToPicker(fragmentManager, adapterPosition, layoutPosition)
+
+
+    }
+
+    override fun onDestroy(isChangingConfiguration: Boolean) { dateTimePickerPresenter
         mainView = null
         mainModel?.onDestroy(isChangingConfiguration)
 

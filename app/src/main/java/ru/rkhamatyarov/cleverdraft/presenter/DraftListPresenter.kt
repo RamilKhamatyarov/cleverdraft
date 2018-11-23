@@ -35,6 +35,8 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
             loadData()
         }
 
+    var notesViewHolder: NotesViewHolder? = null
+
     override fun onDestroy(isChangingConfiguration: Boolean) {
         mainView = null
         mainModel?.onDestroy(isChangingConfiguration)
@@ -53,11 +55,15 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         val viewTaskRow: View = inflater.inflate(R.layout.holder_notes, parent, false)
         val viewHolder = NotesViewHolder(viewTaskRow)
 
+        notesViewHolder = viewHolder
+
         return viewHolder
     }
 
     override fun bindViewHolder(holder: NotesViewHolder, position: Int) {
         val note: Note? = mainModel?.getNote(position)
+
+        notesViewHolder = holder
 
         holder.content.setText(note?.content)
         val formatter = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.US)
@@ -77,15 +83,23 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int)
+    override fun setDateTimeFromPicker(fragmentManager: FragmentManager) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun clickDeleteNote(note: Note?,
+                                 adapterPosition: Int,
+                                 layoutPosition: Int)
+
             = openDeleteAlert(note, adapterPosition, layoutPosition)
 
-    override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {
+    override fun clickOpenNote(adapterPosition: Int,
+                               layoutPosition: Int) {
         getView().showProgress()
 
-        val openNoteTask: OpenNoteTask = OpenNoteTask(mainModel, mainView)
-        openNoteTask.adapterPos = adapterPosition
-        openNoteTask.layoutPos = layoutPosition
+        val openNoteTask = OpenNoteTask(mainModel, mainView)
+        openNoteTask.adapterPosition = adapterPosition
+        openNoteTask.layoutPosition = layoutPosition
 
         openNoteTask.execute()
     }
@@ -96,7 +110,10 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
      * @param adapterPos    Adapter position
      * @param layoutPos     Recycler layout position
      */
-    private fun openDeleteAlert(note: Note?, adapterPosition: Int, layoutPosition: Int ) {
+    private fun openDeleteAlert(note: Note?,
+                                adapterPosition: Int,
+                                layoutPosition: Int ) {
+
         var alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(getActivityContext())
         alertDialogBuilder.setPositiveButton("DELETE", { dialog, width ->
 
@@ -120,8 +137,8 @@ class DraftListPresenter(view: MainMVP.ViewOps): MainMVP.PresenterOps, MainMVP.P
         getView().showProgress()
 
         val deleteNoteTask: DeleteNoteTask = DeleteNoteTask(mainModel, mainView)
-        deleteNoteTask.adapterPos = adapterPosition
-        deleteNoteTask.layoutPos = layoutPosition
+        deleteNoteTask.adapterPosition = adapterPosition
+        deleteNoteTask.layoutPosition = layoutPosition
         deleteNoteTask.note = note
 
         deleteNoteTask.execute()
