@@ -1,32 +1,25 @@
 package ru.rkhamatyarov.cleverdraft.model
 
+import android.content.Context
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.data.NoteDAO
 
 /**
  * Created by RKhamatyarov on 03.09.2017.
  */
-open class MainModel(var mainPresenter: MainMVP.ProvidedPresenterOps?): MainMVP.ProvidedModelOps{
+open class MainModel(context: Context?): MainMVP.ProvidedModelOps{
 
-    //    private lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
     private var noteDAO: NoteDAO?
     lateinit var notes: ArrayList<Note>
 
     /*Main constructor, called by Activity during MVP setup*/
     init {
-        noteDAO = NoteDAO(mainPresenter?.getApplicationContext())
+        noteDAO = NoteDAO(context)
         loadData()
     }
 
-    //Test contructor. Called only during unit testing
-    constructor(mainPresenter: MainMVP.ProvidedPresenterOps, noteDAO: NoteDAO): this(mainPresenter) {
-        this.noteDAO = noteDAO
-    }
-
-
     override fun onDestroy(isChangingConfiguration: Boolean) {
         if (!isChangingConfiguration) {
-            mainPresenter = null
             noteDAO = null
             notes.clear()
 

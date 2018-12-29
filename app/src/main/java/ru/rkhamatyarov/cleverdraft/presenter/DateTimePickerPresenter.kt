@@ -5,22 +5,19 @@ import android.app.DialogFragment
 import android.app.FragmentManager
 import android.content.Context
 import android.util.Log
-import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
-import ru.rkhamatyarov.cleverdraft.view.MainActivity
-import java.lang.ref.WeakReference
 import java.util.*
 
 /**
  * Created by RKhamatyarov on 08.02.2018.
  */
 
-class DateTimePickerPresenter(dialogFramgent: DialogFragment) {
+class DateTimePickerPresenter(dialogFragment: DateTimePickerFragment) {
     private val TAG = javaClass.simpleName
 
-    var dateTimeView:    DialogFragment
+    var dateTimeView: DialogFragment
     init {
-        dateTimeView = dialogFramgent
+        dateTimeView = dialogFragment
     }
 
     private var _dateTime: Date? = null

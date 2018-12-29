@@ -1,7 +1,5 @@
 package ru.rkhamatyarov.cleverdraft.view
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,19 +14,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import ru.rkhamatyarov.cleverdraft.ChiefApp
+import org.koin.android.ext.android.inject
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
-import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-import ru.rkhamatyarov.cleverdraft.utililities.di.MainActivityModule
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
-import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
-import javax.inject.Inject
 
 /**
  * Created by RKhamatyarov on 23.07.2017.
@@ -43,8 +36,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
     override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
-    @Inject
-    lateinit var draftListPresenter: MainMVP.ProvidedPresenterOps
+    val draftListPresenter: MainMVP.ProvidedPresenterOps by inject()
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -71,13 +63,13 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
      */
     private fun setupViews() {
 
-        val fab = findViewById(R.id.list_fab)
+        val fab = findViewById<FloatingActionButton>(R.id.list_fab)
         fab.setOnClickListener(this)
 
         mainListAdapter = ListNotes()
-        mProgress = findViewById(R.id.list_progressbar) as ProgressBar?
+        mProgress = findViewById<ProgressBar>(R.id.list_progressbar) as ProgressBar?
 
-        val mList = findViewById(R.id.list_notes) as RecyclerView
+        val mList = findViewById<RecyclerView>(R.id.list_notes)
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
@@ -85,7 +77,7 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
         mList.adapter = mainListAdapter
         mList.itemAnimator = DefaultItemAnimator()
 
-        toolbar = findViewById(R.id.list_toolbar) as? Toolbar // Attaching the layout to the toolbar object
+        toolbar = findViewById<Toolbar>(R.id.list_toolbar)  // Attaching the layout to the toolbar object
         if (toolbar != null) {
             setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
 
@@ -111,20 +103,17 @@ class DraftListActivity : AppCompatActivity(), View.OnClickListener, MainMVP.Vie
 
 
     private fun initialize() {
+        //TODO if not use remove it
         Log.d(TAG, "initialize")
-        setupComponent()
     }
 
 
     private fun reinitialize() {
-        draftListPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as MainMVP.ProvidedPresenterOps
+        //TODO if not work fix it
+//        draftListPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as MainMVP.ProvidedPresenterOps
         draftListPresenter.setView(this)
     }
 
-
-    private fun setupComponent() {
-        ChiefApp.get(this).getAppComponent().getDraftListComponent(DraftListActivityModule(this)).inject(this)
-    }
 
 
     override fun onClick(v: View) {

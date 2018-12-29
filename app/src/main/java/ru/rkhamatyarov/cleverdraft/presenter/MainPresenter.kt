@@ -1,11 +1,7 @@
 package ru.rkhamatyarov.cleverdraft.presenter
 
 
-import android.app.DialogFragment
-
-import android.app.FragmentManager
 import android.content.Context
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,34 +10,16 @@ import android.widget.Toast
 import ru.rkhamatyarov.cleverdraft.MainMVP
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.model.Note
-import ru.rkhamatyarov.cleverdraft.view.DateTimePickerFragment
 import ru.rkhamatyarov.cleverdraft.view.utilities.NotesViewHolder
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
-import ru.rkhamatyarov.cleverdraft.presenter.async.*
-import javax.inject.Inject
 
 
 /**
  * Created by RKhamatyarov on 03.09.2017.
  */
-class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePickerPresenter): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
+class MainPresenter(val mainModel: MainMVP.ProvidedModelOps,dateTimePickerPresenter: DateTimePickerPresenter): MainMVP.PresenterOps, MainMVP.ProvidedPresenterOps  {
 
-
-    /*View reference. We use as a WeakReference
-    // because the Activity could be destroyed at any time
-    // and we don't want to create a memory leak*/
-    var mainView: WeakReference<MainMVP.ViewOps>?
-    init {
-        mainView = WeakReference<MainMVP.ViewOps>(view)
-    }
-
-    var mainModel: MainMVP.ProvidedModelOps? = null
-        set(value){
-            field = value
-            loadData()
-        }
     private var adapterPos = -1
     private var layoutPos = -1
 
@@ -61,7 +39,7 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
 
 
     override fun setView(view: MainMVP.ViewOps) {
-        this.mainView = WeakReference<MainMVP.ViewOps>(view)
+//        this.mainView = WeakReference<MainMVP.ViewOps>(view)
     }
 
     override fun createViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
@@ -92,56 +70,56 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
     override fun getNotesCount(): Int? = mainModel?.getNotesCount()
 
     override fun newNote(editText: EditText) {
-        getView().showProgress()
-
-        val noteText: String = editText.text.toString()
-
-        if (!noteText.isEmpty()) {
-            val newNoteTask: NewNoteTask = NewNoteTask(mainModel, mainView)
-            newNoteTask.noteText = noteText
-            newNoteTask.execute()
-
-        } else {
-            try{
-                getView().showToast(makeToast("Cannot add a blank note!"))
-            } catch(e: NullPointerException){
-                e.printStackTrace()
-            }
-        }
+//        getView().showProgress()
+//
+//        val noteText: String = editText.text.toString()
+//
+//        if (!noteText.isEmpty()) {
+//            val newNoteTask: NewNoteTask = NewNoteTask(mainModel, mainView)
+//            newNoteTask.noteText = noteText
+//            newNoteTask.execute()
+//
+//        } else {
+//            try{
+//                getView().showToast(makeToast("Cannot add a blank note!"))
+//            } catch(e: NullPointerException){
+//                e.printStackTrace()
+//            }
+//        }
     }
 
     override fun updateNote(editText: EditText, position: Int) {
-        getView().showProgress()
-
-        val noteText: String = editText.text.toString()
-
-        if (!noteText.isEmpty()) {
-            val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView)
-            updateNoteTask.adapterPos = position
-            updateNoteTask.layoutPos = layoutPos
-            updateNoteTask.noteText = noteText
-            updateNoteTask.execute()
-        } else {
-            try{
-                getView().showToast(makeToast("Cannot add a blank note!"))
-            } catch(e: NullPointerException){
-                e.printStackTrace()
-            }
-        }
+//        getView().showProgress()
+//
+//        val noteText: String = editText.text.toString()
+//
+//        if (!noteText.isEmpty()) {
+//            val updateNoteTask: UpdateNoteTask = UpdateNoteTask(mainModel, mainView)
+//            updateNoteTask.adapterPos = position
+//            updateNoteTask.layoutPos = layoutPos
+//            updateNoteTask.noteText = noteText
+//            updateNoteTask.execute()
+//        } else {
+//            try{
+//                getView().showToast(makeToast("Cannot add a blank note!"))
+//            } catch(e: NullPointerException){
+//                e.printStackTrace()
+//            }
+//        }
     }
 
     private fun loadData() {
-        try{
-            getView().showProgress()
-            LoadDataTask(mainModel, mainView).execute()
-
-        } catch (e: NullPointerException){
-            e.printStackTrace()
-        }
+//        try{
+//            getView().showProgress()
+//            LoadDataTask(mainModel, mainView).execute()
+//
+//        } catch (e: NullPointerException){
+//            e.printStackTrace()
+//        }
     }
 
     private fun makeToast(text: String): Toast {
-        return Toast.makeText(getView().getAppContext(), text, Toast.LENGTH_SHORT)
+        return Toast.makeText(getView()!!.getAppContext(), text, Toast.LENGTH_SHORT)
     }
     fun makeNote(content: String): Note {
         val note = Note(content, getDate())
@@ -154,22 +132,22 @@ class MainPresenter(view: MainMVP.ViewOps, dateTimePickerPresenter: DateTimePick
     }
 
 //    @Throws(NullPointerException::class)
-    private fun getView(): MainMVP.ViewOps = mainView?.get()!!
+    private fun getView(): MainMVP.ViewOps? = null //mainView?.get()!!
 
     override fun clickOpenNote(adapterPosition: Int, layoutPosition: Int) {}
 
     override fun clickDeleteNote(note: Note?, adapterPosition: Int, layoutPosition: Int) {}
 
     override fun onDestroy(isChangingConfiguration: Boolean) {
-        mainView = null
-        mainModel?.onDestroy(isChangingConfiguration)
-
-        if (!isChangingConfiguration) mainModel = null
+//        mainView = null
+//        mainModel?.onDestroy(isChangingConfiguration)
+//
+//        if (!isChangingConfiguration) mainModel = null
     }
 
-    override fun getApplicationContext(): Context = getView().getAppContext()
+    override fun getApplicationContext(): Context = getView()!!.getAppContext()
 
-    override fun getActivityContext(): Context = getView().getActContext()
+    override fun getActivityContext(): Context = getView()!!.getActContext()
 
 }
 

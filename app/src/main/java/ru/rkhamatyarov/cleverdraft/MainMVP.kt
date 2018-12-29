@@ -39,7 +39,7 @@ interface  MainMVP {
     }
 
 
-    interface ProvidedPresenterOps{
+    interface   ProvidedPresenterOps{
         fun getApplicationContext(): Context
         fun getActivityContext(): Context
 
