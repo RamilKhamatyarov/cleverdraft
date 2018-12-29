@@ -1,15 +1,13 @@
 package ru.rkhamatyarov.cleverdraft.view
 
-import android.app.FragmentManager
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-
-
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,18 +15,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import ru.rkhamatyarov.cleverdraft.ChiefApp
+import org.koin.android.ext.android.inject
 import ru.rkhamatyarov.cleverdraft.MainMVP
-import javax.inject.Inject
-
-import ru.rkhamatyarov.cleverdraft.MainMVP.ProvidedPresenterOps
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
 import ru.rkhamatyarov.cleverdraft.presenter.MainPresenter
-
 import ru.rkhamatyarov.cleverdraft.utilities.StateMaintainer
-import ru.rkhamatyarov.cleverdraft.utililities.di.*
-import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps {
     private var mainTextNewNote: EditText? = null
@@ -37,13 +29,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private var toolbar: Toolbar? = null
     override fun showAlert(alertDialog: android.app.AlertDialog) = alertDialog.show()
 
+    val mainPresenter: MainMVP.ProvidedPresenterOps by inject()
 
-
-    @Inject
-    lateinit var mainPresenter: MainMVP.ProvidedPresenterOps
-
-    @Inject
-    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
+    val dateTimePickerPresenter: DateTimePickerPresenter by inject()
 
     // Responsible to maintain the object's integrity
     // during configurations change
@@ -71,17 +59,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
     private fun setupViews() {
 
 
-        val fab = findViewById(R.id.fab)
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener(this)
 
-        mainTextNewNote = findViewById(R.id.edit_note) as EditText
+        mainTextNewNote = findViewById<EditText>(R.id.edit_note)
 
         insertIntentText()
 
-        mProgress = findViewById(R.id.progressbar) as ProgressBar?
+        mProgress = findViewById<ProgressBar>(R.id.progressbar)
 
 
-        toolbar = findViewById(R.id.main_toolbar) as? Toolbar // Attaching the layout to the toolbar object
+        toolbar = findViewById<Toolbar>(R.id.main_toolbar) // Attaching the layout to the toolbar object
         if (toolbar != null) {
             setSupportActionBar(toolbar)  // Setting toolbar as the ActionBar with setSupportActionBar() call
         }
@@ -110,20 +98,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     private fun initialize() {
         Log.d(TAG, "initialize")
-        setupComponent()
+        //TODO remove if don't work
     }
 
 
     private fun reinitialize() {
-        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
+        //TODO see work, if not fix it
+//        mainPresenter = mStateMaintainer[MainPresenter::class.java.simpleName] as ProvidedPresenterOps
         mainPresenter.setView(this)
     }
 
-
-    private fun setupComponent() {
-        ChiefApp.get(this).getAppComponent().getMainComponent(MainActivityModule(this)).inject(this)
-
-    }
 
 
     override fun onClick(v: View) {
@@ -224,7 +208,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, MainMVP.ViewOps 
 
     private fun setDateTime() {
         val dateTimePickerFragment = DateTimePickerFragment()
-        ChiefApp.get(this).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(dateTimePickerFragment)).inject(dateTimePickerFragment)
         dateTimePickerPresenter.setDateTimeToPicker(fragmentManager)
 
     }

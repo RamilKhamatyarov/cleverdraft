@@ -2,26 +2,23 @@ package ru.rkhamatyarov.cleverdraft.view
 
 
 import android.annotation.TargetApi
-import android.app.*
+import android.app.Activity
+import android.app.Dialog
+import android.app.DialogFragment
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
 import android.widget.TimePicker
-import ru.rkhamatyarov.cleverdraft.ChiefApp
+import org.koin.android.ext.android.inject
 import ru.rkhamatyarov.cleverdraft.R
 import ru.rkhamatyarov.cleverdraft.presenter.DateTimePickerPresenter
-import ru.rkhamatyarov.cleverdraft.presenter.DraftListPresenter
-import ru.rkhamatyarov.cleverdraft.utilities.di.DraftListActivityModule
-import ru.rkhamatyarov.cleverdraft.utilities.di.module.DateTimePickerFragmentModule
 import java.util.*
-import javax.inject.Inject
 
 
 /**
@@ -37,8 +34,7 @@ class DateTimePickerFragment : DialogFragment(){
     private val TAG = javaClass.simpleName
     private var time: Long = 0
 
-    @Inject
-    lateinit var dateTimePickerPresenter: DateTimePickerPresenter
+    val dateTimePickerPresenter: DateTimePickerPresenter by inject()
 
     companion object {
         val ARG_DATE = "ARG_DATE"
@@ -62,7 +58,6 @@ class DateTimePickerFragment : DialogFragment(){
 
     @TargetApi(Build.VERSION_CODES.M)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        setupComponent()
 
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(activity)
 
@@ -116,9 +111,6 @@ class DateTimePickerFragment : DialogFragment(){
         targetFragment.onActivityResult(targetRequestCode, resultCode, intent)
     }
 
-    private fun setupComponent() {
-        ChiefApp.get(this.activity).getAppComponent().getDateTimePickerComponent(DateTimePickerFragmentModule(this)).inject(this)
-    }
 
 
 }
